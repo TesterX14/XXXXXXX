@@ -962,17 +962,6 @@ function ChloeX:Window(Flag)
     return self
 end
 
--- Chloe.Window.KeyBind
-CHX[58] = Enum.KeyCode.F3
-UserInputService.InputBegan:Connect(function(input, gpe)
-    if gpe then return end
-    if input.KeyCode == CHX[58] then
-        if CHX[16] then
-            CHX[16].Visible = not CHX[16].Visible
-        end
-    end
-end)
-
 -- Chloe.Window.ToggleUI
 function GuiFunc:ToggleUI()
     CHX[59] = Instance.new("ScreenGui")
@@ -1042,3 +1031,5 @@ function GuiFunc:ToggleUI()
 end
 
 GuiFunc:ToggleUI()
+
+
