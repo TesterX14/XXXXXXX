@@ -6,27 +6,27 @@
 
 
 -- Chloe.GlobalService
-local HttpService       = game:GetService("HttpService")
-local UserInputService  = game:GetService("UserInputService")
-local TweenService      = game:GetService("TweenService")
-local Players           = game:GetService("Players")
-local LocalPlayer       = Players.LocalPlayer
-local Mouse             = LocalPlayer:GetMouse()
-local CoreGui           = game:GetService("CoreGui")
-local camera            = workspace.CurrentCamera
-local viewport          = camera and camera.ViewportSize or Vector2.new(1920, 1080)
+local HttpService      = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService     = game:GetService("TweenService")
+local Players          = game:GetService("Players")
+local LocalPlayer      = Players.LocalPlayer
+local Mouse            = LocalPlayer:GetMouse()
+local CoreGui          = game:GetService("CoreGui")
+local camera           = workspace.CurrentCamera
+local viewport         = camera and camera.ViewportSize or Vector2.new(1920, 1080)
 
 -- Chloe.Config.CreateConfig.Folder
 if not isfolder("Chloe X") then makefolder("Chloe X") end
 if not isfolder("Chloe X/Config") then makefolder("Chloe X/Config") end
 
 -- Chloe.Config.Game
-local gameName = tostring(game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
-gameName       = gameName:gsub("[^%w_ ]", "")
-gameName       = gameName:gsub("%s+", "_")
+local gameName        = tostring(game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
+gameName              = gameName:gsub("[^%w_ ]", "")
+gameName              = gameName:gsub("%s+", "_")
 
 -- Chloe.Config.GameName
-local ConfigFile = "Chloe X/Config/Chloe_" .. gameName .. ".json"
+local ConfigFile      = "Chloe X/Config/Chloe_" .. gameName .. ".json"
 local ConfigData      = {}
 local Elements        = {}
 local CURRENT_VERSION = nil
@@ -80,6 +80,7 @@ function isMobileDevice()
         and not UserInputService.KeyboardEnabled
         and not UserInputService.MouseEnabled
 end
+
 local isMobile = isMobileDevice()
 
 -- Chloe.UI.SafeSize
@@ -169,7 +170,6 @@ function MakeDraggable(topBarObject, dragObject)
     topBarObject.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1
             or input.UserInputType == Enum.UserInputType.Touch then
-
             Dragging = true
             DragStart = input.Position
             StartPosition = dragObject.Position
@@ -185,7 +185,6 @@ function MakeDraggable(topBarObject, dragObject)
     topBarObject.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement
             or input.UserInputType == Enum.UserInputType.Touch then
-
             DragInput = input
         end
     end)
@@ -245,7 +244,7 @@ end
 
 -- Chloe.MakeNotify
 function ChloeX:MakeNotify(Notify)
-    Notify = Notify or {}
+    Notify             = Notify or {}
     Notify.Title       = Notify.Title or "Chloe X"
     Notify.Description = Notify.Description or "Notification"
     Notify.Content     = Notify.Content or "Content"
@@ -254,8 +253,8 @@ function ChloeX:MakeNotify(Notify)
     Notify.Delay       = Notify.Delay or 4
 
     -- Chloe.MakeNotify.Screen
-    local gui = Notifier()
-    local layout = gui:FindFirstChild("NotifyLayout")
+    local gui          = Notifier()
+    local layout       = gui:FindFirstChild("NotifyLayout")
     if not layout then return end
 
     local CHX = {}
@@ -438,8 +437,8 @@ setmetatable(ChloeX, {
 -- Chloe.Window.CreateWindow
 function ChloeX:Window(Flag)
     -- Chloe.Window.Config
-    Flag = Flag or {}
-    local GuiConfig = Flag
+    Flag                   = Flag or {}
+    local GuiConfig        = Flag
 
     GuiConfig.Title        = GuiConfig.Title or "Chloe X"
     GuiConfig.Footer       = GuiConfig.Footer or "Chloee :3"
@@ -448,52 +447,52 @@ function ChloeX:Window(Flag)
     GuiConfig.Version      = GuiConfig.Version or 1
     GuiConfig.ToggleKey    = GuiConfig.ToggleKey or Enum.KeyCode.F3
 
-    CURRENT_VERSION = GuiConfig.Version
+    CURRENT_VERSION        = GuiConfig.Version
     LoadConfigFromFile()
 
-    local themeColors = MergeTheme(DefaultThemeColors(), GuiConfig.ThemeColors)
+    local themeColors              = MergeTheme(DefaultThemeColors(), GuiConfig.ThemeColors)
 
-    local self = setmetatable({}, WindowClass)
-    self.GuiConfig   = GuiConfig
-    self.ThemeColors = themeColors
-    self.Tabs        = {}
-    self.Visible     = true
+    local self                     = setmetatable({}, WindowClass)
+    self.GuiConfig                 = GuiConfig
+    self.ThemeColors               = themeColors
+    self.Tabs                      = {}
+    self.Visible                   = true
 
-    local CHX = {}
+    local CHX                      = {}
 
     -- Chloe.Window.ScreenGui
-    CHX[15] = Instance.new("ScreenGui")
-    CHX[15].ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    CHX[15].ResetOnSpawn = false
-    CHX[15].Name = "ChloeX_MainGui"
-    CHX[15].Parent = CoreGui
+    CHX[15]                        = Instance.new("ScreenGui")
+    CHX[15].ZIndexBehavior         = Enum.ZIndexBehavior.Sibling
+    CHX[15].ResetOnSpawn           = false
+    CHX[15].Name                   = "ChloeX_MainGui"
+    CHX[15].Parent                 = CoreGui
 
     -- Chloe.Window.DropShadowHolder
-    CHX[16] = Instance.new("Frame")
+    CHX[16]                        = Instance.new("Frame")
     CHX[16].BackgroundTransparency = 1
-    CHX[16].BorderSizePixel = 0
-    CHX[16].AnchorPoint = Vector2.new(0.5, 0.5)
-    CHX[16].Position = UDim2.new(0.5, 0, 0.5, 0)
-    CHX[16].Size = safeSize(isMobile and 470 or 640, isMobile and 270 or 400)
-    CHX[16].ZIndex = 0
-    CHX[16].Name = "DropShadowHolder"
-    CHX[16].Parent = CHX[15]
+    CHX[16].BorderSizePixel        = 0
+    CHX[16].AnchorPoint            = Vector2.new(0.5, 0.5)
+    CHX[16].Position               = UDim2.new(0.5, 0, 0.5, 0)
+    CHX[16].Size                   = safeSize(isMobile and 470 or 640, isMobile and 270 or 400)
+    CHX[16].ZIndex                 = 0
+    CHX[16].Name                   = "DropShadowHolder"
+    CHX[16].Parent                 = CHX[15]
 
     -- Chloe.Window.DropShadow
-    CHX[17] = Instance.new("ImageLabel")
-    CHX[17].Image = "rbxassetid://6015897843"
-    CHX[17].ImageColor3 = Color3.fromRGB(15, 15, 15)
-    CHX[17].ImageTransparency = 0.35
-    CHX[17].ScaleType = Enum.ScaleType.Slice
-    CHX[17].SliceCenter = Rect.new(49, 49, 450, 450)
-    CHX[17].AnchorPoint = Vector2.new(0.5, 0.5)
+    CHX[17]                        = Instance.new("ImageLabel")
+    CHX[17].Image                  = "rbxassetid://6015897843"
+    CHX[17].ImageColor3            = Color3.fromRGB(15, 15, 15)
+    CHX[17].ImageTransparency      = 0.35
+    CHX[17].ScaleType              = Enum.ScaleType.Slice
+    CHX[17].SliceCenter            = Rect.new(49, 49, 450, 450)
+    CHX[17].AnchorPoint            = Vector2.new(0.5, 0.5)
     CHX[17].BackgroundTransparency = 1
-    CHX[17].BorderSizePixel = 0
-    CHX[17].Position = UDim2.new(0.5, 0, 0.5, 0)
-    CHX[17].Size = UDim2.new(1, 47, 1, 47)
-    CHX[17].ZIndex = 0
-    CHX[17].Name = "DropShadow"
-    CHX[17].Parent = CHX[16]
+    CHX[17].BorderSizePixel        = 0
+    CHX[17].Position               = UDim2.new(0.5, 0, 0.5, 0)
+    CHX[17].Size                   = UDim2.new(1, 47, 1, 47)
+    CHX[17].ZIndex                 = 0
+    CHX[17].Name                   = "DropShadow"
+    CHX[17].Parent                 = CHX[16]
 
     -- Chloe.Window.Main
     if GuiConfig.Theme then
@@ -661,80 +660,80 @@ function ChloeX:Window(Flag)
     CHX[32].ChildRemoved:Connect(UpdateTabsCanvas)
 
     -- Chloe.Window.RightPanel
-    CHX[34] = Instance.new("Frame")
-    CHX[34].BackgroundTransparency = 1
-    CHX[34].BorderSizePixel = 0
-    CHX[34].Position = UDim2.new(0, GuiConfig["Tab Width"] + 18, 0, 44)
-    CHX[34].Size = UDim2.new(1, -(GuiConfig["Tab Width"] + 27), 1, -53)
-    CHX[34].Name = "Layers"
-    CHX[34].Parent = CHX[18]
+    CHX[34]                         = Instance.new("Frame")
+    CHX[34].BackgroundTransparency  = 1
+    CHX[34].BorderSizePixel         = 0
+    CHX[34].Position                = UDim2.new(0, GuiConfig["Tab Width"] + 18, 0, 44)
+    CHX[34].Size                    = UDim2.new(1, -(GuiConfig["Tab Width"] + 27), 1, -53)
+    CHX[34].Name                    = "Layers"
+    CHX[34].Parent                  = CHX[18]
 
     -- Chloe.Window.MakeUICorner
-    CHX[35] = Instance.new("UICorner")
-    CHX[35].CornerRadius = UDim.new(0, 4)
-    CHX[35].Parent = CHX[34]
+    CHX[35]                         = Instance.new("UICorner")
+    CHX[35].CornerRadius            = UDim.new(0, 4)
+    CHX[35].Parent                  = CHX[34]
 
     -- Chloe.Window.MakeStroke
-    CHX[36] = Instance.new("UIStroke")
-    CHX[36].Color = themeColors.Stroke
-    CHX[36].Thickness = 1
-    CHX[36].ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    CHX[36].Parent = CHX[34]
+    CHX[36]                         = Instance.new("UIStroke")
+    CHX[36].Color                   = themeColors.Stroke
+    CHX[36].Thickness               = 1
+    CHX[36].ApplyStrokeMode         = Enum.ApplyStrokeMode.Border
+    CHX[36].Parent                  = CHX[34]
 
     -- Chloe.Window.MakeTab
-    CHX[37] = Instance.new("TextLabel")
-    CHX[37].Font = Enum.Font.GothamBold
-    CHX[37].Text = ""
-    CHX[37].TextColor3 = themeColors.Text
-    CHX[37].TextSize = 20
-    CHX[37].TextWrapped = true
-    CHX[37].TextXAlignment = Enum.TextXAlignment.Left
-    CHX[37].BackgroundTransparency = 1
-    CHX[37].Position = UDim2.new(0, 10, 0, 4)
-    CHX[37].Size = UDim2.new(1, -20, 0, 26)
-    CHX[37].Name = "NameTab"
-    CHX[37].Parent = CHX[34]
+    CHX[37]                         = Instance.new("TextLabel")
+    CHX[37].Font                    = Enum.Font.GothamBold
+    CHX[37].Text                    = ""
+    CHX[37].TextColor3              = themeColors.Text
+    CHX[37].TextSize                = 20
+    CHX[37].TextWrapped             = true
+    CHX[37].TextXAlignment          = Enum.TextXAlignment.Left
+    CHX[37].BackgroundTransparency  = 1
+    CHX[37].Position                = UDim2.new(0, 10, 0, 4)
+    CHX[37].Size                    = UDim2.new(1, -20, 0, 26)
+    CHX[37].Name                    = "NameTab"
+    CHX[37].Parent                  = CHX[34]
 
     -- Chloe.Window.LayersReal
-    CHX[38] = Instance.new("Frame")
-    CHX[38].AnchorPoint = Vector2.new(0, 1)
-    CHX[38].BackgroundTransparency = 1
-    CHX[38].BorderSizePixel = 0
-    CHX[38].ClipsDescendants = true
-    CHX[38].Position = UDim2.new(0, 0, 1, 0)
-    CHX[38].Size = UDim2.new(1, 0, 1, -30)
-    CHX[38].Name = "LayersReal"
-    CHX[38].Parent = CHX[34]
+    CHX[38]                         = Instance.new("Frame")
+    CHX[38].AnchorPoint             = Vector2.new(0, 1)
+    CHX[38].BackgroundTransparency  = 1
+    CHX[38].BorderSizePixel         = 0
+    CHX[38].ClipsDescendants        = true
+    CHX[38].Position                = UDim2.new(0, 0, 1, 0)
+    CHX[38].Size                    = UDim2.new(1, 0, 1, -30)
+    CHX[38].Name                    = "LayersReal"
+    CHX[38].Parent                  = CHX[34]
 
     -- Chloe.Window.LayersFolder
-    CHX[39] = Instance.new("Folder")
-    CHX[39].Name = "LayersFolder"
-    CHX[39].Parent = CHX[38]    
+    CHX[39]                         = Instance.new("Folder")
+    CHX[39].Name                    = "LayersFolder"
+    CHX[39].Parent                  = CHX[38]
 
     --- Chloe.Window.LayersPageLayout
-    CHX[40] = Instance.new("UIPageLayout")
-    CHX[40].SortOrder = Enum.SortOrder.LayoutOrder
-    CHX[40].Name = "LayersPageLayout"
-    CHX[40].Parent = CHX[39]
-    CHX[40].TweenTime = 0.35
-    CHX[40].EasingDirection = Enum.EasingDirection.InOut
-    CHX[40].EasingStyle = Enum.EasingStyle.Quad
+    CHX[40]                         = Instance.new("UIPageLayout")
+    CHX[40].SortOrder               = Enum.SortOrder.LayoutOrder
+    CHX[40].Name                    = "LayersPageLayout"
+    CHX[40].Parent                  = CHX[39]
+    CHX[40].TweenTime               = 0.35
+    CHX[40].EasingDirection         = Enum.EasingDirection.InOut
+    CHX[40].EasingStyle             = Enum.EasingStyle.Quad
     CHX[40].ScrollWheelInputEnabled = false
-    CHX[40].TouchInputEnabled = false
-    CHX[40].GamepadInputEnabled = false
+    CHX[40].TouchInputEnabled       = false
+    CHX[40].GamepadInputEnabled     = false
 
     -- Chloe.WindowObjectFields
-    self.GUI          = CHX[15]
-    self.RootHolder   = CHX[16]
-    self.Main         = CHX[18]
-    self.Top          = CHX[20]
-    self.ScrollTab    = CHX[32]
-    self.Layers       = CHX[34]
-    self.NameTab      = CHX[37]
-    self.LayersFolder = CHX[39]
-    self.PageLayout   = CHX[40]
-    self.ToggleKey    = GuiConfig.ToggleKey
-    self.ToggleButton = nil
+    self.GUI                        = CHX[15]
+    self.RootHolder                 = CHX[16]
+    self.Main                       = CHX[18]
+    self.Top                        = CHX[20]
+    self.ScrollTab                  = CHX[32]
+    self.Layers                     = CHX[34]
+    self.NameTab                    = CHX[37]
+    self.LayersFolder               = CHX[39]
+    self.PageLayout                 = CHX[40]
+    self.ToggleKey                  = GuiConfig.ToggleKey
+    self.ToggleButton               = nil
 
     -- Chloe.Window.Draggable
     MakeDraggable(CHX[20], CHX[16])
@@ -934,7 +933,6 @@ function ChloeX:Window(Flag)
         CHX[57].InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1
                 or input.UserInputType == Enum.UserInputType.Touch then
-
                 dragging = true
                 dragStart = input.Position
                 startPos = CHX[54].Position
@@ -949,7 +947,7 @@ function ChloeX:Window(Flag)
 
         UserInputService.InputChanged:Connect(function(input)
             if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
-                or input.UserInputType == Enum.UserInputType.Touch) then
+                    or input.UserInputType == Enum.UserInputType.Touch) then
                 update(input)
             end
         end)
@@ -959,77 +957,87 @@ function ChloeX:Window(Flag)
 
     -- Chloe.Window.LoadConfigElements
     LoadConfigElements()
-    return self
-end
+    function self:ToggleUI()
+        if not self._ToggleMade then
+            -- Chloe.Window.UIButton.ScreenGui
+            CHX[58] = Instance.new("ScreenGui")
+            CHX[58].Parent = CoreGui
+            CHX[58].ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+            CHX[58].Name = "CHX-Button-Extra"
 
--- Chloe.Window.ToggleUI
-function GuiFunc:ToggleUI()
-    CHX[59] = Instance.new("ScreenGui")
-    CHX[59].Parent = CoreGui
-    CHX[59].ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    CHX[59].Name = "ChloeRawr"
+             -- Chloe.Window.UIButton.ImageLabel
+            CHX[59] = Instance.new("ImageLabel", CHX[58])
+            CHX[59].Size = UDim2.new(0, 40, 0, 40)
+            CHX[59].Position = UDim2.new(0, 20, 0, 100)
+            CHX[59].BackgroundTransparency = 1
+            CHX[59].Image = "rbxassetid://" .. tostring(self.GuiConfig.Image or 97167558235554)
+            CHX[59].ScaleType = Enum.ScaleType.Fit
 
-    CHX[60] = Instance.new("ImageLabel")
-    CHX[60].Parent = CHX[59]
-    CHX[60].Size = UDim2.new(0, 40, 0, 40)
-    CHX[60].Position = UDim2.new(0, 20, 0, 100)
-    CHX[60].BackgroundTransparency = 1
-    CHX[60].Image = "rbxassetid://" .. GuiConfig.Image
-    CHX[60].ScaleType = Enum.ScaleType.Fit
+             -- Chloe.Window.UIButton.UICorner
+            CHX[60] = Instance.new("UICorner")
+            CHX[60].CornerRadius = UDim.new(0, 6)
+            CHX[60].Parent = CHX[59]
 
-    CHX[61] = Instance.new("UICorner")
-    CHX[61].CornerRadius = UDim.new(0, 6)
-    CHX[61].Parent = CHX[60]
+             -- Chloe.Window.UIButton.TextButton
+            CHX[61] = Instance.new("TextButton", CHX[59])
+            CHX[61].Size = UDim2.new(1, 0, 1, 0)
+            CHX[61].BackgroundTransparency = 1
+            CHX[61].Text = ""
 
-    CHX[62] = Instance.new("TextButton")
-    CHX[62].Parent = CHX[60]
-    CHX[62].Size = UDim2.new(1, 0, 1, 0)
-    CHX[62].BackgroundTransparency = 1
-    CHX[62].Text = ""
-
-    CHX[62].MouseButton1Click:Connect(function()
-        if CHX[16] then
-            CHX[16].Visible = not CHX[16].Visible
-        end
-    end)
-
-    CHX[63] = false
-    CHX[64] = nil
-    CHX[65] = nil
-
-    CHX[66] = function(input)
-        local delta = input.Position - CHX[64]
-        CHX[60].Position = UDim2.new(
-            CHX[65].X.Scale,
-            CHX[65].X.Offset + delta.X,
-            CHX[65].Y.Scale,
-            CHX[65].Y.Offset + delta.Y
-        )
-    end
-
-    CHX[62].InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1
-        or input.UserInputType == Enum.UserInputType.Touch then
-            CHX[63] = true
-            CHX[64] = input.Position
-            CHX[65] = CHX[60].Position
-
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    CHX[63] = false
+            CHX[61].MouseButton1Click:Connect(function()
+                self.Visible = not self.Visible
+                if self.RootHolder then
+                    self.RootHolder.Visible = self.Visible
                 end
             end)
-        end
-    end)
 
-    UserInputService.InputChanged:Connect(function(input)
-        if CHX[63] and (input.UserInputType == Enum.UserInputType.MouseMovement
-        or input.UserInputType == Enum.UserInputType.Touch) then
-            CHX[66](input)
+             -- Chloe.Window.UIButton.Draggable.State
+            CHX[62] = false
+            CHX[63] = nil
+            CHX[64] = nil
+
+            local function update(input)
+                local delta = input.Position - CHX[63]
+                CHX[59].Position = UDim2.new(
+                    CHX[64].X.Scale,
+                    CHX[64].X.Offset + delta.X,
+                    CHX[64].Y.Scale,
+                    CHX[64].Y.Offset + delta.Y
+                )
+            end
+
+            CHX[61].InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1
+                    or input.UserInputType == Enum.UserInputType.Touch then
+                    CHX[62] = true
+                    CHX[63] = input.Position
+                    CHX[64] = CHX[59].Position
+
+                    input.Changed:Connect(function()
+                        if input.UserInputState == Enum.UserInputState.End then
+                            CHX[62] = false
+                        end
+                    end)
+                end
+            end)
+
+            UserInputService.InputChanged:Connect(function(input)
+                if CHX[62] and (input.UserInputType == Enum.UserInputType.MouseMovement
+                        or input.UserInputType == Enum.UserInputType.Touch) then
+                    update(input)
+                end
+            end)
+
+            self._ToggleMade = true
+            self.ToggleUIButton = CHX[58]
         end
-    end)
+
+         -- Chloe.Window.UIButton.ShowHide
+        self.Visible = not self.Visible
+        if self.RootHolder then
+            self.RootHolder.Visible = self.Visible
+        end
+    end
+
+    return self
 end
-
-GuiFunc:ToggleUI()
-
-
