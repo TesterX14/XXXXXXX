@@ -434,6 +434,29 @@ setmetatable(ChloeX, {
     end
 })
 
+local WindowClass = {}
+WindowClass.__index = WindowClass
+
+function DefaultThemeColors()
+    return {
+        Background = Color3.fromRGB(15, 15, 20),
+        Topbar     = Color3.fromRGB(25, 25, 30),
+        Accent     = Color3.fromRGB(255, 0, 255),
+        AccentAlt  = Color3.fromRGB(200, 0, 200),
+        Text       = Color3.fromRGB(255, 255, 255),
+        SubText    = Color3.fromRGB(180, 180, 180),
+        Stroke     = Color3.fromRGB(70, 70, 70)
+    }
+end
+
+function MergeTheme(a, b)
+    if not b then return a end
+    for k, v in pairs(b) do
+        a[k] = v
+    end
+    return a
+end
+
 -- Chloe.Window.CreateWindow
 function ChloeX:Window(Flag)
     -- Chloe.Window.Config
