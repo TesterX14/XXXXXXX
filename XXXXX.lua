@@ -196,7 +196,7 @@ function MakeDraggable(topBarObject, dragObject)
     end)
 end
 
-ChloeX = {}
+local ChloeX = {}
 
 -- Chloe.MakeNotify.Screen
 function Notifier()
@@ -1030,7 +1030,7 @@ function ChloeX:Window(Flag)
 
             self._ToggleMade = true
             self.ToggleUIButton = CHX[58]
-        end
+        end 
 
          -- Chloe.Window.UIButton.ShowHide
         self.Visible = not self.Visible
@@ -1041,3 +1041,5 @@ function ChloeX:Window(Flag)
 
     return self
 end
+
+return ChloeX
