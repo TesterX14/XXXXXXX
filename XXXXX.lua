@@ -101,6 +101,115 @@ function safeSize(pxWidth, pxHeight)
     return UDim2.new(scaleX, 0, scaleY, 0)
 end
 
+-- Chloe.UI.MakeDraggable
+local function MakeDraggable(topbarobject, object)
+    local function CustomPos(topbarobject, object)
+        local Dragging, DragInput, DragStart, StartPosition
+
+        local function UpdatePos(input)
+            local Delta = input.Position - DragStart
+            local pos = UDim2.new(
+                StartPosition.X.Scale,
+                StartPosition.X.Offset + Delta.X,
+                StartPosition.Y.Scale,
+                StartPosition.Y.Offset + Delta.Y
+            )
+            local Tween = TweenService:Create(object, TweenInfo.new(0.2), { Position = pos })
+            Tween:Play()
+        end
+
+        topbarobject.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                Dragging = true
+                DragStart = input.Position
+                StartPosition = object.Position
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        Dragging = false
+                    end
+                end)
+            end
+        end)
+
+        topbarobject.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                DragInput = input
+            end
+        end)
+
+        UserInputService.InputChanged:Connect(function(input)
+            if input == DragInput and Dragging then
+                UpdatePos(input)
+            end
+        end)
+    end
+
+    local function CustomSize(object)
+        local Dragging, DragInput, DragStart, StartSize
+
+        local minSizeX, minSizeY
+        local defSizeX, defSizeY
+
+        if isMobile then
+            minSizeX, minSizeY = 100, 100
+            defSizeX, defSizeY = 470, 270
+        else
+            minSizeX, minSizeY = 100, 100
+            defSizeX, defSizeY = 640, 400
+        end
+
+        object.Size = UDim2.new(0, defSizeX, 0, defSizeY)
+
+        local changesizeobject = Instance.new("Frame")
+        changesizeobject.AnchorPoint = Vector2.new(1, 1)
+        changesizeobject.BackgroundTransparency = 1
+        changesizeobject.Size = UDim2.new(0, 40, 0, 40)
+        changesizeobject.Position = UDim2.new(1, 20, 1, 20)
+        changesizeobject.Name = "changesizeobject"
+        changesizeobject.Parent = object
+
+        local function UpdateSize(input)
+            local Delta = input.Position - DragStart
+            local newWidth = StartSize.X.Offset + Delta.X
+            local newHeight = StartSize.Y.Offset + Delta.Y
+
+            newWidth = math.max(newWidth, minSizeX)
+            newHeight = math.max(newHeight, minSizeY)
+
+            local Tween = TweenService:Create(object, TweenInfo.new(0.2), { Size = UDim2.new(0, newWidth, 0, newHeight) })
+            Tween:Play()
+        end
+
+        changesizeobject.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                Dragging = true
+                DragStart = input.Position
+                StartSize = object.Size
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        Dragging = false
+                    end
+                end)
+            end
+        end)
+
+        changesizeobject.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                DragInput = input
+            end
+        end)
+
+        UserInputService.InputChanged:Connect(function(input)
+            if input == DragInput and Dragging then
+                UpdateSize(input)
+            end
+        end)
+    end
+
+    CustomSize(object)
+    CustomPos(topbarobject, object)
+end
+
 -- Chloe.UI.CircleClick
 function CircleClick(Button, X, Y)
     task.spawn(function()
@@ -450,79 +559,33 @@ function ChloeX:Window(Flag)
     CURRENT_VERSION        = GuiConfig.Version
     LoadConfigFromFile()
 
-    local themeColors               = MergeTheme(DefaultThemeColors(), GuiConfig.ThemeColors)
+    local themeColors              = MergeTheme(DefaultThemeColors(), GuiConfig.ThemeColors)
 
-    local self                      = setmetatable({}, WindowClass)
-    self.GuiConfig                  = GuiConfig
-    self.ThemeColors                = themeColors
-    self.Tabs                       = {}
-    self.Visible                    = true
+    local self                     = setmetatable({}, WindowClass)
+    self.GuiConfig                 = GuiConfig
+    self.ThemeColors               = themeColors
+    self.Tabs                      = {}
+    self.Visible                   = true
 
-    local CHX                       = {}
+    local CHX                      = {}
 
     -- Chloe.Window.ScreenGui
-    CHX[15]                         = Instance.new("ScreenGui")
-    CHX[15].ZIndexBehavior          = Enum.ZIndexBehavior.Sibling
-    CHX[15].ResetOnSpawn            = false
-    CHX[15].Name                    = "ChloeX_MainGui"
-    CHX[15].Parent                  = CoreGui
+    CHX[15]                        = Instance.new("ScreenGui")
+    CHX[15].ZIndexBehavior         = Enum.ZIndexBehavior.Sibling
+    CHX[15].ResetOnSpawn           = false
+    CHX[15].Name                   = "ChloeX_MainGui"
+    CHX[15].Parent                 = CoreGui
 
     -- Chloe.Window.DropShadowHolder
-    CHX[16]                         = Instance.new("Frame")
-    CHX[16].BackgroundTransparency  = 1
-    CHX[16].BorderSizePixel         = 0
-    CHX[16].AnchorPoint             = Vector2.new(0.5, 0.5)
-    CHX[16].Position                = UDim2.new(0.5, 0, 0.5, 0)
-    CHX[16].Size                    = safeSize(isMobile and 470 or 640, isMobile and 270 or 400)
-    CHX[16].ZIndex                  = 0
-    CHX[16].Name                    = "DropShadowHolder"
-    CHX[16].Parent                  = CHX[15]
-
-    CHX[200]                        = Instance.new("Frame")
-    CHX[200].Size                   = UDim2.new(0, 16, 0, 16)
-    CHX[200].Position               = UDim2.new(1, -16, 1, -16)
-    CHX[200].AnchorPoint            = Vector2.new(1, 1)
-    CHX[200].BackgroundColor3       = themeColors.Accent
-    CHX[200].BorderSizePixel        = 0
-    CHX[200].ZIndex                 = 999
-    CHX[200].BackgroundTransparency = 0
-    CHX[200].Parent                 = CHX[16]
-    CHX[200].Name                   = "ResizeHandle"
-
-    CHX[16].ClipsDescendants        = false
-
-    local resizing                  = false
-    local startSize, startPos
-
-    CHX[200].InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1
-            or input.UserInputType == Enum.UserInputType.Touch then
-            resizing = true
-            startSize = CHX[16].Size
-            startPos = input.Position
-        end
-    end)
-
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1
-            or input.UserInputType == Enum.UserInputType.Touch then
-            resizing = false
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement
-                or input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - startPos
-
-            CHX[16].Size = UDim2.new(
-                startSize.X.Scale,
-                math.clamp(startSize.X.Offset + delta.X, 380, 900),
-                startSize.Y.Scale,
-                math.clamp(startSize.Y.Offset + delta.Y, 240, 700)
-            )
-        end
-    end)
+    CHX[16]                        = Instance.new("Frame")
+    CHX[16].BackgroundTransparency = 1
+    CHX[16].BorderSizePixel        = 0
+    CHX[16].AnchorPoint            = Vector2.new(0.5, 0.5)
+    CHX[16].Position               = UDim2.new(0.5, 0, 0.5, 0)
+    CHX[16].Size                   = safeSize(isMobile and 470 or 640, isMobile and 270 or 400)
+    CHX[16].ZIndex                 = 0
+    CHX[16].Name                   = "DropShadowHolder"
+    CHX[16].Parent                 = CHX[15]
 
     -- Chloe.Window.DropShadow
     CHX[17]                        = Instance.new("ImageLabel")
@@ -1011,7 +1074,7 @@ function ChloeX:Window(Flag)
             CHX[58].ZIndexBehavior = Enum.ZIndexBehavior.Sibling
             CHX[58].Name = "CHX-Button-Extra"
 
-            -- Chloe.Window.UIButton.ImageLabel
+             -- Chloe.Window.UIButton.ImageLabel
             CHX[59] = Instance.new("ImageLabel", CHX[58])
             CHX[59].Size = UDim2.new(0, 40, 0, 40)
             CHX[59].Position = UDim2.new(0, 20, 0, 100)
@@ -1019,12 +1082,12 @@ function ChloeX:Window(Flag)
             CHX[59].Image = "rbxassetid://" .. tostring(self.GuiConfig.Image or 97167558235554)
             CHX[59].ScaleType = Enum.ScaleType.Fit
 
-            -- Chloe.Window.UIButton.UICorner
+             -- Chloe.Window.UIButton.UICorner
             CHX[60] = Instance.new("UICorner")
             CHX[60].CornerRadius = UDim.new(0, 6)
             CHX[60].Parent = CHX[59]
 
-            -- Chloe.Window.UIButton.TextButton
+             -- Chloe.Window.UIButton.TextButton
             CHX[61] = Instance.new("TextButton", CHX[59])
             CHX[61].Size = UDim2.new(1, 0, 1, 0)
             CHX[61].BackgroundTransparency = 1
@@ -1037,7 +1100,7 @@ function ChloeX:Window(Flag)
                 end
             end)
 
-            -- Chloe.Window.UIButton.Draggable.State
+             -- Chloe.Window.UIButton.Draggable.State
             CHX[62] = false
             CHX[63] = nil
             CHX[64] = nil
@@ -1076,9 +1139,9 @@ function ChloeX:Window(Flag)
 
             self._ToggleMade = true
             self.ToggleUIButton = CHX[58]
-        end
+        end 
 
-        -- Chloe.Window.UIButton.ShowHide
+         -- Chloe.Window.UIButton.ShowHide
         self.Visible = not self.Visible
         if self.RootHolder then
             self.RootHolder.Visible = self.Visible
