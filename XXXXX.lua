@@ -510,6 +510,13 @@ function Chloex:Window(GuiConfig)
     Chloeex.ResetOnSpawn = false
     Chloeex.Parent = game:GetService("CoreGui")
 
+    local Lighting = game:GetService("Lighting")
+
+    local Blur = Instance.new("BlurEffect")
+    Blur.Name = "ChloeX_Blur"
+    Blur.Size = 18
+    Blur.Parent = Lighting
+
     DropShadowHolder.BackgroundTransparency = 1
     DropShadowHolder.BorderSizePixel = 0
     DropShadowHolder.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -547,8 +554,8 @@ function Chloex:Window(GuiConfig)
         Main.BackgroundTransparency = 1
         Main.ImageTransparency = GuiConfig.ThemeTransparency or 0.15
     else
-        Main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        Main.BackgroundTransparency = 0
+        Main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        Main.BackgroundTransparency = 0.25
     end
 
     Main.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -753,10 +760,12 @@ function Chloex:Window(GuiConfig)
     end
 
     Min.Activated:Connect(function()
+        Blur.Enabled = false
         CircleClick(Min, Mouse.X, Mouse.Y)
         DropShadowHolder.Visible = false
     end)
     Close.Activated:Connect(function()
+        Blur.Enabled = true
         CircleClick(Close, Mouse.X, Mouse.Y)
 
         local Overlay = Instance.new("Frame")
@@ -2303,7 +2312,7 @@ function Chloex:Window(GuiConfig)
                 Elements[configKey] = InputFunc
                 return InputFunc
             end
-            
+
             function Items:AddDropdown(DropdownConfig)
                 local DropdownConfig = DropdownConfig or {}
                 DropdownConfig.Title = DropdownConfig.Title or "Title"
