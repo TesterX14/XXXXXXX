@@ -543,6 +543,32 @@ setmetatable(ChloeX, {
     end
 })
 
+-- Chloe.UI.DefaultThemeColors
+function DefaultThemeColors()
+    return {
+        Background = Color3.fromRGB(18, 18, 22),
+        Topbar     = Color3.fromRGB(25, 25, 30),
+        Text       = Color3.fromRGB(220, 220, 220),
+        SubText    = Color3.fromRGB(160, 160, 160),
+        Accent     = Color3.fromRGB(0, 170, 255),
+        AccentAlt  = Color3.fromRGB(0, 120, 200),
+        Stroke     = Color3.fromRGB(40, 40, 50),
+    }
+end
+
+function MergeTheme(defaults, custom)
+    if type(custom) ~= "table" then
+        return defaults
+    end
+
+    local merged = {}
+    for k, v in pairs(defaults) do
+        merged[k] = custom[k] or v
+    end
+
+    return merged
+end
+
 -- Chloe.Window.CreateWindow
 function ChloeX:Window(Flag)
     -- Chloe.Window.Config
