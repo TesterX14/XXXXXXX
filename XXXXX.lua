@@ -2369,6 +2369,7 @@ function Chloex:Window(GuiConfig)
                 local UICorner13 = Instance.new("UICorner")
                 local InputTextBox = Instance.new("TextBox")
 
+                Input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Input.BackgroundTransparency = 0.935
                 Input.BorderSizePixel = 0
                 Input.LayoutOrder = CountItem
@@ -2381,6 +2382,7 @@ function Chloex:Window(GuiConfig)
                 InputTitle.Font = Enum.Font.GothamBold
                 InputTitle.Text = InputConfig.Title
                 InputTitle.TextSize = 13
+                InputTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
                 InputTitle.TextXAlignment = Enum.TextXAlignment.Left
                 InputTitle.BackgroundTransparency = 1
                 InputTitle.Position = UDim2.new(0, 10, 0, 10)
@@ -2390,6 +2392,7 @@ function Chloex:Window(GuiConfig)
                 InputContent.Font = Enum.Font.GothamBold
                 InputContent.Text = InputConfig.Content
                 InputContent.TextSize = 12
+                InputContent.TextColor3 = Color3.fromRGB(255, 255, 255)
                 InputContent.TextTransparency = 0.6
                 InputContent.TextWrapped = true
                 InputContent.TextXAlignment = Enum.TextXAlignment.Left
@@ -2399,6 +2402,7 @@ function Chloex:Window(GuiConfig)
                 InputContent.Parent = Input
 
                 InputFrame.AnchorPoint = Vector2.new(1, 0.5)
+                InputFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 InputFrame.BackgroundTransparency = 0.95
                 InputFrame.BorderSizePixel = 0
                 InputFrame.ClipsDescendants = true
@@ -2411,13 +2415,16 @@ function Chloex:Window(GuiConfig)
 
                 InputTextBox.Font = Enum.Font.GothamBold
                 InputTextBox.PlaceholderText = "Input Here"
+                InputTextBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
                 InputTextBox.Text = InputConfig.Default
                 InputTextBox.TextSize = 12
+                InputTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
                 InputTextBox.TextXAlignment = Enum.TextXAlignment.Left
                 InputTextBox.BackgroundTransparency = 1
-                InputTextBox.Position = UDim2.new(0, 5, 0.5, 0)
+                InputTextBox.Position = UDim2.new(0, 5, 0.1, 0)
                 InputTextBox.Size = UDim2.new(1, -10, 1, -8)
                 InputTextBox.Parent = InputFrame
+
 
                 function InputFunc:Set(Value)
                     InputFunc.Value = Value
@@ -2702,6 +2709,7 @@ function Chloex:Window(GuiConfig)
                     end
 
                     ConfigData[configKey] = DropdownFunc.Value
+                    SaveConfig()
 
                     local texts = {}
                     for _, Drop in ScrollSelect:GetChildren() do
@@ -3002,4 +3010,3 @@ function Chloex:Window(GuiConfig)
 end
 
 return Chloex
-
