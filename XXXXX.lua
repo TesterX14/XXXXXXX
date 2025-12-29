@@ -634,7 +634,121 @@ function chloex(msg, delay, color, title, desc)
     })
 end
 
+local function ShowLoading()
+    local Players = game:GetService("Players")
+    local TweenService = game:GetService("TweenService")
+
+    local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "ChloeX_Loading"
+    gui.IgnoreGuiInset = true
+    gui.ResetOnSpawn = false
+    gui.Parent = playerGui
+
+    local holder = Instance.new("Frame")
+    holder.AnchorPoint = Vector2.new(0.5, 0.5)
+    holder.Position = UDim2.new(0.5, 0, 0.15, 0)
+    holder.Size = UDim2.new(0, 360, 0, 88)
+    holder.BackgroundTransparency = 1
+    holder.Parent = gui
+
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.new(1, 0, 1, 0)
+    bg.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
+    bg.BackgroundTransparency = 0.12
+    bg.BorderSizePixel = 0
+    bg.Parent = holder
+    Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 14)
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Thickness = 1
+    stroke.Transparency = 0.45
+    stroke.Color = Color3.fromRGB(120, 200, 255)
+    stroke.Parent = bg
+
+    local icon = Instance.new("ImageLabel")
+    icon.BackgroundTransparency = 1
+    icon.Size = UDim2.new(0, 42, 0, 42)
+    icon.Position = UDim2.new(0, 14, 0, 14)
+    icon.Image = "rbxassetid://6859361595"
+    icon.Parent = bg
+
+    local title = Instance.new("TextLabel")
+    title.BackgroundTransparency = 1
+    title.Position = UDim2.new(0, 66, 0, 16)
+    title.Size = UDim2.new(1, -80, 0, 20)
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 15
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.Text = "CHLOE X ANNOUNCEMENT"
+    title.TextColor3 = Color3.fromRGB(140, 220, 255)
+    title.Parent = bg
+
+    local msg = Instance.new("TextLabel")
+    msg.BackgroundTransparency = 1
+    msg.Position = UDim2.new(0, 66, 0, 36)
+    msg.Size = UDim2.new(1, -80, 0, 20)
+    msg.Font = Enum.Font.Gotham
+    msg.TextSize = 13
+    msg.TextXAlignment = Enum.TextXAlignment.Left
+    msg.Text = "Chloe X Script are free script!"
+    msg.TextColor3 = Color3.fromRGB(230, 235, 255)
+    msg.Parent = bg
+
+    local barBg = Instance.new("Frame")
+    barBg.Position = UDim2.new(0, 14, 1, -14)
+    barBg.Size = UDim2.new(1, -28, 0, 6)
+    barBg.BackgroundColor3 = Color3.fromRGB(35, 38, 48)
+    barBg.BorderSizePixel = 0
+    barBg.Parent = bg
+    Instance.new("UICorner", barBg).CornerRadius = UDim.new(1, 0)
+
+    local bar = Instance.new("Frame")
+    bar.AnchorPoint = Vector2.new(0, 0.5)
+    bar.Position = UDim2.new(0, 0, 0.5, 0)
+    bar.Size = UDim2.new(0, 0, 1, 0)
+    bar.BackgroundColor3 = Color3.fromRGB(120, 200, 255)
+    bar.BorderSizePixel = 0
+    bar.Parent = barBg
+    Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
+
+    bg.BackgroundTransparency = 1
+    stroke.Transparency = 1
+    icon.ImageTransparency = 1
+    title.TextTransparency = 1
+    msg.TextTransparency = 1
+    bar.BackgroundTransparency = 1
+
+    TweenService:Create(bg, TweenInfo.new(0.3), { BackgroundTransparency = 0.12 }):Play()
+    TweenService:Create(stroke, TweenInfo.new(0.3), { Transparency = 0.45 }):Play()
+    TweenService:Create(icon, TweenInfo.new(0.3), { ImageTransparency = 0 }):Play()
+    TweenService:Create(title, TweenInfo.new(0.3), { TextTransparency = 0 }):Play()
+    TweenService:Create(msg, TweenInfo.new(0.3), { TextTransparency = 0 }):Play()
+    TweenService:Create(bar, TweenInfo.new(3, Enum.EasingStyle.Linear), {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 0
+    }):Play()
+
+    task.delay(3.2, function()
+        TweenService:Create(bg, TweenInfo.new(0.25), { BackgroundTransparency = 1 }):Play()
+        TweenService:Create(stroke, TweenInfo.new(0.25), { Transparency = 1 }):Play()
+        TweenService:Create(icon, TweenInfo.new(0.25), { ImageTransparency = 1 }):Play()
+        TweenService:Create(title, TweenInfo.new(0.25), { TextTransparency = 1 }):Play()
+        TweenService:Create(msg, TweenInfo.new(0.25), { TextTransparency = 1 }):Play()
+        TweenService:Create(bar, TweenInfo.new(0.25), { BackgroundTransparency = 1 }):Play()
+        task.wait(0.28)
+        gui:Destroy()
+    end)
+end
+
 function Chloex:Window(GuiConfig)
+    if not _G.__CHX_LOADED then
+        _G.__CHX_LOADED = true
+        ShowLoading()
+        task.wait()
+    end
+
     GuiConfig              = GuiConfig or {}
     GuiConfig.Title        = GuiConfig.Title or "Chloe X"
     GuiConfig.Footer       = GuiConfig.Footer or "Chloee :3"
@@ -644,12 +758,10 @@ function Chloex:Window(GuiConfig)
 
     CURRENT_VERSION        = GuiConfig.Version
 
-    -- Try to autoload config if set
     local autoloadName = GetAutoload()
     if autoloadName then
         LoadConfig(autoloadName)
     else
-        -- Initialize with default empty config
         ConfigData = { _version = CURRENT_VERSION }
     end
 
