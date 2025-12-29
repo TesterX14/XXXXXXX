@@ -943,20 +943,6 @@ function Chloex:Window(GuiConfig)
     UICorner6.CornerRadius = UDim.new(0, 2)
     UICorner6.Parent = Layers
 
-    NameTab.Font = Enum.Font.GothamBold
-    NameTab.Text = ""
-    NameTab.TextColor3 = Color3.fromRGB(255, 255, 255)
-    NameTab.TextSize = 24
-    NameTab.TextWrapped = true
-    NameTab.TextXAlignment = Enum.TextXAlignment.Left
-    NameTab.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    NameTab.BackgroundTransparency = 0.9990000128746033
-    NameTab.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    NameTab.BorderSizePixel = 0
-    NameTab.Size = UDim2.new(1, 0, 0, 30)
-    NameTab.Name = "NameTab"
-    NameTab.Parent = Layers
-
     LayersReal.AnchorPoint = Vector2.new(0, 1)
     LayersReal.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     LayersReal.BackgroundTransparency = 0.9990000128746033
@@ -964,7 +950,7 @@ function Chloex:Window(GuiConfig)
     LayersReal.BorderSizePixel = 0
     LayersReal.ClipsDescendants = true
     LayersReal.Position = UDim2.new(0, 0, 1, 0)
-    LayersReal.Size = UDim2.new(1, 0, 1, -33)
+    LayersReal.Size = UDim2.new(1, 0, 1.10000002, -30)
     LayersReal.Name = "LayersReal"
     LayersReal.Parent = Layers
 
@@ -1979,7 +1965,7 @@ function Chloex:Window(GuiConfig)
                 ButtonConfig.SubTitle = ButtonConfig.SubTitle or nil
                 ButtonConfig.SubCallback = ButtonConfig.SubCallback or function() end
 
-                local ICON_IDLE = "rbxassetid://6859372539"
+                local ICON_IDLE = "rbxassetid://11128718799"
                 local ICON_CLICK = "rbxassetid://6860051781"
 
                 local Button = Instance.new("Frame")
@@ -2016,7 +2002,7 @@ function Chloex:Window(GuiConfig)
                 Icon.BackgroundTransparency = 1
                 Icon.Size = UDim2.new(0, 20, 0, 20)
                 Icon.AnchorPoint = Vector2.new(0, 0.5)
-                Icon.Position = UDim2.new(0, 8, 0.5, 0)
+                Icon.Position = UDim2.new(0, 0, 0.5, 0)
                 Icon.Image = ICON_IDLE
                 Icon.Parent = MainButton
 
