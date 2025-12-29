@@ -529,7 +529,7 @@ function Chloex:MakeNotify(NotifyConfig)
         Desc.BackgroundTransparency = 1
         Desc.TextColor3 = NotifyConfig.Color
         Desc.Size = UDim2.new(1, 0, 1, 0)
-        Desc.Position = UDim2.new(0, Title.TextBounds.X + 15, 0, 0)
+        Desc.Position = UDim2.new(0, 87, 0, 0)
         Desc.Parent = Top
 
         local Close = Instance.new("TextButton")
@@ -1979,6 +1979,9 @@ function Chloex:Window(GuiConfig)
                 ButtonConfig.SubTitle = ButtonConfig.SubTitle or nil
                 ButtonConfig.SubCallback = ButtonConfig.SubCallback or function() end
 
+                local ICON_IDLE = "rbxassetid://6859372539"
+                local ICON_CLICK = "rbxassetid://6860051781"
+
                 local Button = Instance.new("Frame")
                 Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Button.BackgroundTransparency = 0.935
@@ -1990,6 +1993,14 @@ function Chloex:Window(GuiConfig)
                 UICorner.CornerRadius = UDim.new(0, 4)
                 UICorner.Parent = Button
 
+                local Icon = Instance.new("ImageLabel")
+                Icon.BackgroundTransparency = 1
+                Icon.Size = UDim2.new(0, 22, 0, 22)
+                Icon.Position = UDim2.new(0, 8, 0.5, 0)
+                Icon.AnchorPoint = Vector2.new(0, 0.5)
+                Icon.Image = ICON_IDLE
+                Icon.Parent = Button
+
                 local MainButton = Instance.new("TextButton")
                 MainButton.Font = Enum.Font.GothamBold
                 MainButton.Text = ButtonConfig.Title
@@ -1998,17 +2009,48 @@ function Chloex:Window(GuiConfig)
                 MainButton.TextTransparency = 0.3
                 MainButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 MainButton.BackgroundTransparency = 0.935
-                MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -8, 1, -10) or UDim2.new(1, -12, 1, -10)
-                MainButton.Position = UDim2.new(0, 6, 0, 5)
+                MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -34, 1, -10) or UDim2.new(1, -38, 1, -10)
+                MainButton.Position = UDim2.new(0, 34, 0, 5)
                 MainButton.Parent = Button
+                MainButton.AutoButtonColor = false
 
                 local mainCorner = Instance.new("UICorner")
                 mainCorner.CornerRadius = UDim.new(0, 4)
                 mainCorner.Parent = MainButton
 
+                local function flash(btn, icon)
+                    if icon then
+                        icon.Image = ICON_CLICK
+                    end
+
+                    TweenService:Create(
+                        btn,
+                        TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                        { BackgroundTransparency = 0.85 }
+                    ):Play()
+
+                    task.delay(0.12, function()
+                        TweenService:Create(
+                            btn,
+                            TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            { BackgroundTransparency = 0.935 }
+                        ):Play()
+
+                        if icon then
+                            icon.Image = ICON_IDLE
+                        end
+                    end)
+                end
+
+                MainButton.MouseButton1Down:Connect(function()
+                    flash(MainButton, Icon)
+                end)
+
                 MainButton.MouseButton1Click:Connect(ButtonConfig.Callback)
 
                 if ButtonConfig.SubTitle then
+                    Icon.Visible = false
+
                     local SubButton = Instance.new("TextButton")
                     SubButton.Font = Enum.Font.GothamBold
                     SubButton.Text = ButtonConfig.SubTitle
@@ -2020,10 +2062,15 @@ function Chloex:Window(GuiConfig)
                     SubButton.Size = UDim2.new(0.5, -8, 1, -10)
                     SubButton.Position = UDim2.new(0.5, 2, 0, 5)
                     SubButton.Parent = Button
+                    SubButton.AutoButtonColor = false
 
                     local subCorner = Instance.new("UICorner")
                     subCorner.CornerRadius = UDim.new(0, 4)
                     subCorner.Parent = SubButton
+
+                    SubButton.MouseButton1Down:Connect(function()
+                        flash(SubButton)
+                    end)
 
                     SubButton.MouseButton1Click:Connect(ButtonConfig.SubCallback)
                 end
