@@ -2702,7 +2702,6 @@ function Chloex:Window(GuiConfig)
                     end
 
                     ConfigData[configKey] = DropdownFunc.Value
-                    SaveConfig()
 
                     local texts = {}
                     for _, Drop in ScrollSelect:GetChildren() do
