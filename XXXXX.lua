@@ -2944,40 +2944,38 @@ function Chloex:Window(GuiConfig)
 
                 Items:AddSubSection("Load From External")
 
-                local ExternalJSON = ""
-
                 Items:AddInput({
-                    Title = "External Config JSON",
-                    Content = "Paste raw JSON config here",
-                    Placeholder = "{ \"Toggle_AutoFish\": true }",
-                    Callback = function(value)
-                        ExternalJSON = value
-                    end
-                })
+                Title = "External Config JSON",
+                Content = "Paste raw JSON config here",
+                Placeholder = "{ \"Toggle_AutoFish\": true }"
+            })
 
                 Items:AddButton({
-                    Title = "Load External JSON",
-                    SubTitle = "Reset & Apply",
-                    Callback = function()
-                        if ExternalJSON == "" then
-                            chloex("External JSON is empty", 3, Color3.fromRGB(255, 100, 100))
-                            return
-                        end
+                Title = "Load External JSON",
+                SubTitle = "Reset & Apply",
+                Callback = function()
+                    local input = Elements["Input_External Config JSON"]
+                    local json = input and input.Value
 
-                        ResetElements()
-
-                        local ok = pcall(function()
-                            LoadExternalConfigFromJSON(ExternalJSON)
-                        end)
-
-                        if ok then
-                            chloex("External config loaded successfully", 3, Color3.fromRGB(100, 255, 100))
-                            StatusParagraph:SetContent("Current: External JSON | Autoload: " .. (GetAutoload() or "None"))
-                        else
-                            chloex("Failed to load external JSON", 3, Color3.fromRGB(255, 100, 100))
-                        end
+                    if not json or json == "" then
+                        chloex("External config JSON kosong", 3, Color3.fromRGB(255, 100, 100))
+                        return
                     end
-                })
+
+                    ResetElements()
+
+                    local ok = pcall(function()
+                        LoadExternalConfigFromJSON(json)
+                    end)
+
+                    if ok then
+                        chloex("External config loaded successfully", 3, Color3.fromRGB(100, 255, 100))
+                        StatusParagraph:SetContent("Current: External JSON | Autoload: " .. (GetAutoload() or "None"))
+                    else
+                        chloex("Failed to load external JSON", 3, Color3.fromRGB(255, 100, 100))
+                    end
+                end
+            })
 
                 return {
                     UpdateStatus = function()
