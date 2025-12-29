@@ -626,10 +626,10 @@ end
 
 function chloex(msg, delay, color, title, desc)
     return Chloex:MakeNotify({
-        Title = title or "ChloeX",
+        Title = title or "Chloe X",
         Description = desc or "Notification",
         Content = msg or "Content",
-        Color = color or Color3.fromRGB(180, 120, 255),
+        Color = color or Color3.fromRGB(0, 208, 255),
         Delay = delay or 4
     })
 end
@@ -1198,13 +1198,13 @@ function Chloex:Window(GuiConfig)
     UICorner36.CornerRadius = UDim.new(0, 3)
     UICorner36.Parent = DropdownSelect
 
-    UIStroke14.Color = Color3.fromRGB(180, 120, 255)
+    UIStroke14.Color = Color3.fromRGB(0, 208, 255)
     UIStroke14.Thickness = 2.5
     UIStroke14.Transparency = 0.8
     UIStroke14.Parent = DropdownSelect
 
     DropdownSelectReal.AnchorPoint = Vector2.new(0.5, 0.5)
-    DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(180, 120, 255)
+    DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(0, 208, 255)
     DropdownSelectReal.BackgroundTransparency = 0.7
     DropdownSelectReal.BorderColor3 = Color3.fromRGB(0, 0, 0)
     DropdownSelectReal.BorderSizePixel = 0
@@ -2869,14 +2869,12 @@ function Chloex:Window(GuiConfig)
             function Items:AddConfigPanel()
                 local selectedConfigName = CurrentConfigName or ""
 
-                -- Status Paragraph
                 local StatusParagraph = Items:AddParagraph({
                     Title = "Config Manager",
                     Content = "Current: " .. (CurrentConfigName or "None") .. " | Autoload: " .. (GetAutoload() or "None"),
                     Icon = "settings"
                 })
 
-                -- Config Name Input
                 local ConfigNameInput = Items:AddInput({
                     Title = "Config Name",
                     Content = "Enter the name for your config",
@@ -2887,7 +2885,6 @@ function Chloex:Window(GuiConfig)
                     end
                 })
 
-                -- Config List Dropdown
                 local configs = GetConfigList()
                 local ConfigDropdown = Items:AddDropdown({
                     Title = "Select Config",
@@ -2900,7 +2897,6 @@ function Chloex:Window(GuiConfig)
                     end
                 })
 
-                -- Save & Load Buttons
                 Items:AddButton({
                     Title = "Save Config",
                     SubTitle = "Load Config",
@@ -2908,9 +2904,8 @@ function Chloex:Window(GuiConfig)
                         if selectedConfigName ~= "" then
                             if SaveConfigAs(selectedConfigName) then
                                 chloex("Config saved: " .. selectedConfigName, 3, Color3.fromRGB(100, 255, 100))
-                                -- Refresh dropdown
                                 local newConfigs = GetConfigList()
-                                ConfigDropdown:SetValues(newConfigs, selectedConfigName)
+                                ConfigDropdown:Set(newConfigs)
                                 StatusParagraph:SetContent("Current: " .. selectedConfigName .. " | Autoload: " .. (GetAutoload() or "None"))
                             end
                         else
@@ -2931,24 +2926,18 @@ function Chloex:Window(GuiConfig)
                     end
                 })
 
-                -- Delete Config & Set Autoload
                 Items:AddButton({
                     Title = "Delete Config",
                     SubTitle = "Set Autoload",
                     Callback = function()
                         if selectedConfigName ~= "" then
-                            -- Confirm before delete
-                            chloex("Click again to confirm delete: " .. selectedConfigName, 4, Color3.fromRGB(255, 150, 100))
                             task.wait(0.5)
-
                             if DeleteConfig(selectedConfigName) then
                                 chloex("Config deleted: " .. selectedConfigName, 3, Color3.fromRGB(255, 100, 100))
                                 selectedConfigName = ""
                                 ConfigNameInput:Set("")
-
-                                -- Refresh dropdown
                                 local newConfigs = GetConfigList()
-                                ConfigDropdown:SetValues(newConfigs, nil)
+                                ConfigDropdown:Set(newConfigs)
                                 StatusParagraph:SetContent("Current: " .. (CurrentConfigName or "None") .. " | Autoload: " .. (GetAutoload() or "None"))
                             end
                         else
@@ -2966,13 +2955,12 @@ function Chloex:Window(GuiConfig)
                     end
                 })
 
-                -- Refresh & Clear Autoload
                 Items:AddButton({
                     Title = "Refresh List",
                     SubTitle = "Clear Autoload",
                     Callback = function()
                         local newConfigs = GetConfigList()
-                        ConfigDropdown:SetValues(newConfigs, nil)
+                        ConfigDropdown:Set(newConfigs)
                         chloex("Config list refreshed (" .. #newConfigs .. " configs)", 2, Color3.fromRGB(150, 150, 255))
                     end,
                     SubCallback = function()
@@ -2982,7 +2970,6 @@ function Chloex:Window(GuiConfig)
                     end
                 })
 
-                -- Reset Elements Button
                 Items:AddButton({
                     Title = "Reset All Elements to Default",
                     Callback = function()
@@ -2995,7 +2982,7 @@ function Chloex:Window(GuiConfig)
 
                 local ExternalJSON = ""
 
-                local ExternalJSONInput = Items:AddInput({
+                Items:AddInput({
                     Title = "External Config JSON",
                     Content = "Paste raw JSON config here",
                     Placeholder = "{ \"Toggle_AutoFish\": true }",
@@ -3004,7 +2991,6 @@ function Chloex:Window(GuiConfig)
                     end
                 })
 
-                -- Load External Config Button
                 Items:AddButton({
                     Title = "Load External JSON",
                     SubTitle = "Reset & Apply",
@@ -3016,29 +3002,26 @@ function Chloex:Window(GuiConfig)
 
                         ResetElements()
 
-                        local ok, err = pcall(function()
+                        local ok = pcall(function()
                             LoadExternalConfigFromJSON(ExternalJSON)
                         end)
 
                         if ok then
                             chloex("External config loaded successfully", 3, Color3.fromRGB(100, 255, 100))
-                            StatusParagraph:SetContent(
-                                "Current: External JSON | Autoload: " .. (GetAutoload() or "None")
-                            )
+                            StatusParagraph:SetContent("Current: External JSON | Autoload: " .. (GetAutoload() or "None"))
                         else
                             chloex("Failed to load external JSON", 3, Color3.fromRGB(255, 100, 100))
                         end
                     end
                 })
 
-                -- Return functions for external manipulation
                 return {
                     UpdateStatus = function()
                         StatusParagraph:SetContent("Current: " .. (CurrentConfigName or "None") .. " | Autoload: " .. (GetAutoload() or "None"))
                     end,
                     RefreshList = function()
                         local newConfigs = GetConfigList()
-                        ConfigDropdown:SetValues(newConfigs, nil)
+                        ConfigDropdown:Set(newConfigs)
                     end
                 }
             end
