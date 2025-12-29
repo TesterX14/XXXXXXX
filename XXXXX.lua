@@ -2005,7 +2005,8 @@ function Chloex:Window(GuiConfig)
                 MainButton.Position = UDim2.new(0, 6, 0, 5)
                 MainButton.Parent = Button
                 MainButton.AutoButtonColor = false
-                MainButton.TextXAlignment = Enum.TextXAlignment.Left
+                MainButton.TextXAlignment = Enum.TextXAlignment.Center
+                MainButton.TextYAlignment = Enum.TextYAlignment.Center
 
                 local mainCorner = Instance.new("UICorner")
                 mainCorner.CornerRadius = UDim.new(0, 4)
@@ -2014,8 +2015,8 @@ function Chloex:Window(GuiConfig)
                 local Icon = Instance.new("ImageLabel")
                 Icon.BackgroundTransparency = 1
                 Icon.Size = UDim2.new(0, 20, 0, 20)
-                Icon.AnchorPoint = Vector2.new(1, 0.5)
-                Icon.Position = UDim2.new(1, -8, 0.5, 0)
+                Icon.AnchorPoint = Vector2.new(0, 0.5)
+                Icon.Position = UDim2.new(0, 8, 0.5, 0)
                 Icon.Image = ICON_IDLE
                 Icon.Parent = MainButton
 
