@@ -519,6 +519,20 @@ function Chloex:MakeNotify(NotifyConfig)
         Top.Name = "Top"
         Top.Parent = NotifyFrameReal
 
+        local Icon = Instance.new("ImageLabel")
+        Icon.Name = "Icon"
+        Icon.BackgroundTransparency = 1
+        Icon.Size = UDim2.new(0, 28, 0, 28)
+        Icon.Position = UDim2.new(0, 10, 0.5, 0)
+        Icon.AnchorPoint = Vector2.new(0, 0.5)
+        Icon.Image = "rbxassetid://6859372539"
+        Icon.Parent = Top
+
+        TextLabel.Position = UDim2.new(0, 44, 0, 0)
+        TextLabel.Size = UDim2.new(1, -44, 1, 0)
+
+        TextLabel1.Position = UDim2.new(0, TextLabel.TextBounds.X + 50, 0, 0)
+
         TextLabel.Font = Enum.Font.GothamBold
         TextLabel.Text = NotifyConfig.Title
         TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
