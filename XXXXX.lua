@@ -529,7 +529,7 @@ function Chloex:MakeNotify(NotifyConfig)
         Desc.BackgroundTransparency = 1
         Desc.TextColor3 = NotifyConfig.Color
         Desc.Size = UDim2.new(1, 0, 1, 0)
-        Desc.Position = UDim2.new(0, 90, 0, 0)
+        Desc.Position = UDim2.new(0, 87, 0, 0)
         Desc.Parent = Top
 
         local Close = Instance.new("TextButton")
@@ -943,20 +943,6 @@ function Chloex:Window(GuiConfig)
     UICorner6.CornerRadius = UDim.new(0, 2)
     UICorner6.Parent = Layers
 
-    NameTab.Font = Enum.Font.GothamBold
-    NameTab.Text = ""
-    NameTab.TextColor3 = Color3.fromRGB(255, 255, 255)
-    NameTab.TextSize = 24
-    NameTab.TextWrapped = true
-    NameTab.TextXAlignment = Enum.TextXAlignment.Left
-    NameTab.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    NameTab.BackgroundTransparency = 0.9990000128746033
-    NameTab.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    NameTab.BorderSizePixel = 0
-    NameTab.Size = UDim2.new(1, 0, 0, 30)
-    NameTab.Name = "NameTab"
-    NameTab.Parent = Layers
-
     LayersReal.AnchorPoint = Vector2.new(0, 1)
     LayersReal.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     LayersReal.BackgroundTransparency = 0.9990000128746033
@@ -964,7 +950,7 @@ function Chloex:Window(GuiConfig)
     LayersReal.BorderSizePixel = 0
     LayersReal.ClipsDescendants = true
     LayersReal.Position = UDim2.new(0, 0, 1, 0)
-    LayersReal.Size = UDim2.new(1, 0, 1, -33)
+    LayersReal.Size = UDim2.new(1, 0, 1.10000002, -30)
     LayersReal.Name = "LayersReal"
     LayersReal.Parent = Layers
 
@@ -1295,6 +1281,8 @@ function Chloex:Window(GuiConfig)
     UIStroke14.Parent = DropdownSelect
 
     DropdownSelectReal.AnchorPoint = Vector2.new(0.5, 0.5)
+    DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(0, 208, 255)
+    DropdownSelectReal.BackgroundTransparency = 0.7
     DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(0, 31, 55)
     DropdownSelectReal.BackgroundTransparency = 0
     DropdownSelectReal.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1482,6 +1470,10 @@ function Chloex:Window(GuiConfig)
         local CountSection = 0
         function Sections:AddSection(Title, AlwaysOpen)
             local Title = Title or "Title"
+            local Section = Instance.new("Frame")
+            local SectionDecideFrame = Instance.new("Frame")
+            local UICorner1 = Instance.new("UICorner")
+            local UIGradient = Instance.new("UIGradient")
             local Section = Instance.new("Frame");
             local SectionDecideFrame = Instance.new("Frame");
             local UICorner1 = Instance.new("UICorner");
@@ -1498,6 +1490,13 @@ function Chloex:Window(GuiConfig)
             Section.Name = "Section"
             Section.Parent = ScrolLayers
 
+            local SectionReal = Instance.new("Frame")
+            local UICorner = Instance.new("UICorner")
+            local UIStroke = Instance.new("UIStroke")
+            local SectionButton = Instance.new("TextButton")
+            local FeatureFrame = Instance.new("Frame")
+            local FeatureImg = Instance.new("ImageLabel")
+            local SectionTitle = Instance.new("TextLabel")
             local SectionReal = Instance.new("Frame");
             local UICorner = Instance.new("UICorner");
             local UIStroke = Instance.new("UIStroke");
@@ -1529,10 +1528,12 @@ function Chloex:Window(GuiConfig)
             SectionButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
             SectionButton.BorderSizePixel = 0
             SectionButton.Size = UDim2.new(1, 0, 1, 0)
+            SectionButton.BackgroundTransparency = 1
             SectionButton.Name = "SectionButton"
             SectionButton.Parent = SectionReal
 
             FeatureFrame.AnchorPoint = Vector2.new(1, 0.5)
+            FeatureFrame.BackgroundTransparency = 1
             FeatureFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
             FeatureFrame.BackgroundTransparency = 0.9990000128746033
             FeatureFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1544,6 +1545,7 @@ function Chloex:Window(GuiConfig)
 
             FeatureImg.Image = "rbxassetid://16851841101"
             FeatureImg.AnchorPoint = Vector2.new(0.5, 0.5)
+            FeatureImg.BackgroundTransparency = 1
             FeatureImg.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             FeatureImg.BackgroundTransparency = 0.9990000128746033
             FeatureImg.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1556,11 +1558,13 @@ function Chloex:Window(GuiConfig)
 
             SectionTitle.Font = Enum.Font.GothamBold
             SectionTitle.Text = Title
+            SectionTitle.TextColor3 = Color3.fromRGB(231, 231, 231)
             SectionTitle.TextColor3 = Color3.fromRGB(230.77499270439148, 230.77499270439148, 230.77499270439148)
             SectionTitle.TextSize = 13
             SectionTitle.TextXAlignment = Enum.TextXAlignment.Left
             SectionTitle.TextYAlignment = Enum.TextYAlignment.Top
             SectionTitle.AnchorPoint = Vector2.new(0, 0.5)
+            SectionTitle.BackgroundTransparency = 1
             SectionTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             SectionTitle.BackgroundTransparency = 0.9990000128746033
             SectionTitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1575,6 +1579,7 @@ function Chloex:Window(GuiConfig)
             SectionDecideFrame.AnchorPoint = Vector2.new(0.5, 0)
             SectionDecideFrame.BorderSizePixel = 0
             SectionDecideFrame.Position = UDim2.new(0.5, 0, 0, 33)
+            SectionDecideFrame.Size = UDim2.new(1, 0, 0, 2)
             SectionDecideFrame.Size = UDim2.new(0, 0, 0, 2)
             SectionDecideFrame.Name = "SectionDecideFrame"
             SectionDecideFrame.Parent = Section
@@ -1588,12 +1593,16 @@ function Chloex:Window(GuiConfig)
             }
             UIGradient.Parent = SectionDecideFrame
 
+            local SectionAdd = Instance.new("Frame")
+            local UICorner8 = Instance.new("UICorner")
+            local UIListLayout2 = Instance.new("UIListLayout")
             --// Section Add
             local SectionAdd = Instance.new("Frame");
             local UICorner8 = Instance.new("UICorner");
             local UIListLayout2 = Instance.new("UIListLayout");
 
             SectionAdd.AnchorPoint = Vector2.new(0.5, 0)
+            SectionAdd.BackgroundTransparency = 1
             SectionAdd.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             SectionAdd.BackgroundTransparency = 0.9990000128746033
             SectionAdd.BorderColor3 = Color3.fromRGB(0, 0, 0)
@@ -1601,6 +1610,7 @@ function Chloex:Window(GuiConfig)
             SectionAdd.ClipsDescendants = true
             SectionAdd.LayoutOrder = 1
             SectionAdd.Position = UDim2.new(0.5, 0, 0, 38)
+            SectionAdd.Size = UDim2.new(1, 0, 0, 0)
             SectionAdd.Size = UDim2.new(1, 0, 0, 100)
             SectionAdd.Name = "SectionAdd"
             SectionAdd.Parent = Section
@@ -1612,12 +1622,15 @@ function Chloex:Window(GuiConfig)
             UIListLayout2.SortOrder = Enum.SortOrder.LayoutOrder
             UIListLayout2.Parent = SectionAdd
 
+            SectionButton:Destroy()
+            FeatureFrame:Destroy()
             local OpenSection = false
 
             local function UpdateSizeScroll()
                 local OffsetY = 0
                 for _, child in ScrolLayers:GetChildren() do
                     if child.Name ~= "UIListLayout" then
+                        OffsetY += child.Size.Y.Offset + 3
                         OffsetY = OffsetY + 3 + child.Size.Y.Offset
                     end
                 end
@@ -1625,6 +1638,7 @@ function Chloex:Window(GuiConfig)
             end
 
             local function UpdateSizeSection()
+                local h = 38
                 if OpenSection then
                     local SectionSizeYWitdh = 38
                     for _, v in SectionAdd:GetChildren() do
@@ -1678,9 +1692,12 @@ function Chloex:Window(GuiConfig)
                 local SectionSizeYWitdh = 38
                 for _, v in SectionAdd:GetChildren() do
                     if v.Name ~= "UIListLayout" and v.Name ~= "UICorner" then
+                        h += v.Size.Y.Offset + 3
                         SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
                     end
                 end
+                Section.Size = UDim2.new(1, 1, 0, h)
+                SectionAdd.Size = UDim2.new(1, 0, 0, h - 38)
                 FeatureFrame.Rotation = 90
                 Section.Size = UDim2.new(1, 1, 0, SectionSizeYWitdh)
                 SectionAdd.Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38)
@@ -1688,6 +1705,7 @@ function Chloex:Window(GuiConfig)
                 UpdateSizeScroll()
             end
 
+            UpdateSizeSection()
             SectionAdd.ChildAdded:Connect(UpdateSizeSection)
             SectionAdd.ChildRemoved:Connect(UpdateSizeSection)
 
@@ -2588,7 +2606,7 @@ function Chloex:Window(GuiConfig)
                 Elements[configKey] = InputFunc
                 return InputFunc
             end
-                        
+
             function Items:AddDropdown(DropdownConfig)
                 local DropdownConfig = DropdownConfig or {}
                 DropdownConfig.Title = DropdownConfig.Title or "Title"
