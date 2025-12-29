@@ -978,7 +978,7 @@ function Chloex:Window(GuiConfig)
         Title.Position = UDim2.new(0, 0, 0, 4)
         Title.BackgroundTransparency = 1
         Title.Font = Enum.Font.GothamBold
-        Title.Text = "ChloeX | Window"
+        Title.Text = "Chloe X Window"
         Title.TextSize = 22
         Title.TextColor3 = Color3.fromRGB(255, 255, 255)
         Title.ZIndex = 52
@@ -1177,7 +1177,8 @@ function Chloex:Window(GuiConfig)
     local DropPageLayout = Instance.new("UIPageLayout");
 
     DropdownSelect.AnchorPoint = Vector2.new(1, 0.5)
-    DropdownSelect.BackgroundColor3 = Color3.fromRGB(30.00000011175871, 30.00000011175871, 30.00000011175871)
+    DropdownSelect.BackgroundColor3 = Color3.fromRGB(11, 93, 188)
+    DropdownSelect.BackgroundTransparency = 0.75
     DropdownSelect.BorderColor3 = Color3.fromRGB(0, 0, 0)
     DropdownSelect.BorderSizePixel = 0
     DropdownSelect.LayoutOrder = 1
@@ -2418,13 +2419,13 @@ function Chloex:Window(GuiConfig)
                 InputTextBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
                 InputTextBox.Text = InputConfig.Default
                 InputTextBox.TextSize = 12
+                InputTextBox.BackgroundTransparency = 0.5
                 InputTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
                 InputTextBox.TextXAlignment = Enum.TextXAlignment.Left
                 InputTextBox.BackgroundTransparency = 1
                 InputTextBox.Position = UDim2.new(0, 5, 0.1, 0)
                 InputTextBox.Size = UDim2.new(1, -10, 1, -8)
                 InputTextBox.Parent = InputFrame
-
 
                 function InputFunc:Set(Value)
                     InputFunc.Value = Value
