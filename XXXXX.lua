@@ -1,55 +1,227 @@
+--// credit: ChloeX
+--// modified: .badmagazine
+
 local HttpService = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local CoreGui = game:GetService("CoreGui")
+local viewport = workspace.CurrentCamera.ViewportSize
 
 if not isfolder("Chloe X") then
     makefolder("Chloe X")
-end
-if not isfolder("Chloe X/Config") then
-    makefolder("Chloe X/Config")
 end
 
 local gameName   = tostring(game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
 gameName         = gameName:gsub("[^%w_ ]", "")
 gameName         = gameName:gsub("%s+", "_")
 
-local ConfigFile = "Chloe X/Config/Chloe_" .. gameName .. ".json"
+local gameFolder = "Chloe X/" .. gameName
+if not isfolder(gameFolder) then
+    makefolder(gameFolder)
+end
 
-ConfigData       = {}
-Elements         = {}
-CURRENT_VERSION  = nil
+local CurrentConfigName = nil
+local AutoloadFile      = gameFolder .. "/autoload.txt"
 
-function SaveConfig()
+ConfigData              = {}
+Elements                = {}
+CURRENT_VERSION         = nil
+
+-- Get list of all config files in game folder
+function GetConfigList()
+    local configs = {}
+    if isfolder and listfiles then
+        local files = listfiles(gameFolder)
+        for _, filepath in pairs(files) do
+            local filename = filepath:match("([^/\\]+)%.json$")
+            if filename then
+                table.insert(configs, filename)
+            end
+        end
+    end
+    return configs
+end
+
+-- Get autoload config name from autoload.txt
+function GetAutoload()
+    if isfile and isfile(AutoloadFile) then
+        local success, content = pcall(function()
+            return readfile(AutoloadFile)
+        end)
+        if success and content and content ~= "" then
+            return content:match("^%s*(.-)%s*$") -- trim whitespace
+        end
+    end
+    return nil
+end
+
+-- Set autoload config
+function SetAutoload(configName)
     if writefile then
-        ConfigData._version = CURRENT_VERSION
-        writefile(ConfigFile, HttpService:JSONEncode(ConfigData))
+        writefile(AutoloadFile, configName)
+        print("[CHX] Autoload config set to: " .. configName)
     end
 end
 
-function LoadConfigFromFile()
-    if not CURRENT_VERSION then return end
-    if isfile and isfile(ConfigFile) then
+-- Clear autoload config
+function ClearAutoload()
+    if delfile and isfile(AutoloadFile) then
+        delfile(AutoloadFile)
+        print("[CHX] Autoload config cleared")
+    end
+end
+
+-- Save config with specific name
+function SaveConfigAs(configName)
+    if not configName or configName == "" then
+        warn("[CHX] Config name cannot be empty")
+        return false
+    end
+
+    if writefile then
+        local filepath = gameFolder .. "/" .. configName .. ".json"
+        ConfigData._version = CURRENT_VERSION
+        writefile(filepath, HttpService:JSONEncode(ConfigData))
+        CurrentConfigName = configName
+        print("[CHX] Config saved as: " .. configName)
+        return true
+    end
+    return false
+end
+
+-- Load config from specific name
+function LoadConfig(configName)
+    if not configName or configName == "" then
+        warn("Config name cannot be empty")
+        return false
+    end
+
+    local filepath = gameFolder .. "/" .. configName .. ".json"
+
+    if not CURRENT_VERSION then return false end
+    if isfile and isfile(filepath) then
         local success, result = pcall(function()
-            return HttpService:JSONDecode(readfile(ConfigFile))
+            return HttpService:JSONDecode(readfile(filepath))
         end)
         if success and type(result) == "table" then
             if result._version == CURRENT_VERSION then
                 ConfigData = result
+                CurrentConfigName = configName
+                LoadConfigElements()
+                print("[CHX] Config loaded: " .. configName)
+                return true
             else
-                ConfigData = { _version = CURRENT_VERSION }
+                warn("[CHX] Config version mismatch")
+                return false
             end
         else
-            ConfigData = { _version = CURRENT_VERSION }
+            warn("[CHX] Failed to decode config")
+            return false
         end
     else
-        ConfigData = { _version = CURRENT_VERSION }
+        warn("[CHX] Config file not found: " .. configName)
+        return false
     end
 end
 
+-- Delete config
+function DeleteConfig(configName)
+    if not configName or configName == "" then
+        warn("[CHX] Config name cannot be empty")
+        return false
+    end
+
+    local filepath = gameFolder .. "/" .. configName .. ".json"
+    if delfile and isfile(filepath) then
+        delfile(filepath)
+        print("[CHX] Config deleted: " .. configName)
+
+        -- If deleted config was autoload, clear autoload
+        if GetAutoload() == configName then
+            ClearAutoload()
+        end
+
+        return true
+    else
+        warn("[CHX] Config file not found: " .. configName)
+        return false
+    end
+end
+
+-- Load config elements into UI
 function LoadConfigElements()
     for key, element in pairs(Elements) do
         if ConfigData[key] ~= nil and element.Set then
             element:Set(ConfigData[key], true)
         end
     end
+end
+
+-- Reset all elements to default
+function ResetElements()
+    -- Clear ConfigData
+    ConfigData = { _version = CURRENT_VERSION }
+
+    -- Reset elements berdasarkan type
+    for key, element in pairs(Elements) do
+        if element.Set then
+            pcall(function()
+                -- Detect type berdasarkan key prefix
+                if key:match("^Toggle_") then
+                    element:Set(false)  -- Toggle default = false
+                elseif key:match("^Slider_") then
+                    element:Set(20)  -- Slider default = 20
+                elseif key:match("^Input_") then
+                    element:Set("")  -- Input default = ""
+                elseif key:match("^Dropdown_") then
+                    -- Dropdown bisa multi atau single
+                    if type(element.Value) == "table" then
+                        element:Set({})  -- Multi dropdown = empty table
+                    else
+                        element:Set(nil)  -- Single dropdown = nil
+                    end
+                end
+            end)
+        end
+    end
+
+    print("Elements reset to defaults")
+end
+
+function LoadExternalConfigFromJSON(jsonString)
+    if not jsonString or jsonString == "" then
+        warn("External config JSON kosong")
+        return false
+    end
+
+    local ok, data = pcall(function()
+        return HttpService:JSONDecode(jsonString)
+    end)
+
+    if not ok or type(data) ~= "table" then
+        warn("[CHX] External config JSON invalid")
+        return false
+    end
+
+    if data._version and CURRENT_VERSION and data._version ~= CURRENT_VERSION then
+        warn("[CHX] External config version mismatch")
+        return false
+    end
+
+    ConfigData = data
+
+    for key, element in pairs(Elements) do
+        if data[key] ~= nil and element.Set then
+            pcall(function()
+                element:Set(data[key], true)
+            end)
+        end
+    end
+
+    print("[CHX] External config loaded from JSON input")
+    return true
 end
 
 local Icons = {
@@ -88,13 +260,6 @@ local Icons = {
     rod       = "rbxassetid://103247953194129",
     fish      = "rbxassetid://97167558235554",
 }
-
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
-local LocalPlayer = game:GetService("Players").LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
-local CoreGui = game:GetService("CoreGui")
-local viewport = workspace.CurrentCamera.ViewportSize
 
 local function isMobileDevice()
     return UserInputService.TouchEnabled
@@ -263,7 +428,7 @@ end
 local Chloex = {}
 function Chloex:MakeNotify(NotifyConfig)
     local NotifyConfig = NotifyConfig or {}
-    NotifyConfig.Title = NotifyConfig.Title or "Chloe X"
+    NotifyConfig.Title = NotifyConfig.Title or "ChloeX"
     NotifyConfig.Description = NotifyConfig.Description or "Notification"
     NotifyConfig.Content = NotifyConfig.Content or "Content"
     NotifyConfig.Color = NotifyConfig.Color or Color3.fromRGB(255, 0, 255)
@@ -461,10 +626,10 @@ end
 
 function chloex(msg, delay, color, title, desc)
     return Chloex:MakeNotify({
-        Title = title or "Chloe X",
+        Title = title or "ChloeX",
         Description = desc or "Notification",
         Content = msg or "Content",
-        Color = color or Color3.fromRGB(0, 208, 255),
+        Color = color or Color3.fromRGB(180, 120, 255),
         Delay = delay or 4
     })
 end
@@ -478,7 +643,15 @@ function Chloex:Window(GuiConfig)
     GuiConfig.Version      = GuiConfig.Version or 1
 
     CURRENT_VERSION        = GuiConfig.Version
-    LoadConfigFromFile()
+
+    -- Try to autoload config if set
+    local autoloadName = GetAutoload()
+    if autoloadName then
+        LoadConfig(autoloadName)
+    else
+        -- Initialize with default empty config
+        ConfigData = { _version = CURRENT_VERSION }
+    end
 
     local GuiFunc = {}
 
@@ -509,13 +682,6 @@ function Chloex:Window(GuiConfig)
     Chloeex.Name = "Chloeex"
     Chloeex.ResetOnSpawn = false
     Chloeex.Parent = game:GetService("CoreGui")
-
-    local Lighting = game:GetService("Lighting")
-
-    local Blur = Instance.new("BlurEffect")
-    Blur.Name = "ChloeX_Blur"
-    Blur.Size = 18
-    Blur.Parent = Lighting
 
     DropShadowHolder.BackgroundTransparency = 1
     DropShadowHolder.BorderSizePixel = 0
@@ -554,8 +720,8 @@ function Chloex:Window(GuiConfig)
         Main.BackgroundTransparency = 1
         Main.ImageTransparency = GuiConfig.ThemeTransparency or 0.15
     else
-        Main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        Main.BackgroundTransparency = 0.25
+        Main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        Main.BackgroundTransparency = 0
     end
 
     Main.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -760,12 +926,10 @@ function Chloex:Window(GuiConfig)
     end
 
     Min.Activated:Connect(function()
-        Blur.Enabled = false
         CircleClick(Min, Mouse.X, Mouse.Y)
         DropShadowHolder.Visible = false
     end)
     Close.Activated:Connect(function()
-        Blur.Enabled = true
         CircleClick(Close, Mouse.X, Mouse.Y)
 
         local Overlay = Instance.new("Frame")
@@ -778,7 +942,7 @@ function Chloex:Window(GuiConfig)
         local Dialog = Instance.new("ImageLabel")
         Dialog.Size = UDim2.new(0, 300, 0, 150)
         Dialog.Position = UDim2.new(0.5, -150, 0.5, -75)
-        Dialog.Image = "rbxassetid://9542022979"
+        Dialog.Image = "rbxassetid://107443308956559"
         Dialog.ImageTransparency = 0
         Dialog.BorderSizePixel = 0
         Dialog.ZIndex = 51
@@ -814,7 +978,7 @@ function Chloex:Window(GuiConfig)
         Title.Position = UDim2.new(0, 0, 0, 4)
         Title.BackgroundTransparency = 1
         Title.Font = Enum.Font.GothamBold
-        Title.Text = "Chloe X Window"
+        Title.Text = "ChloeX | Window"
         Title.TextSize = 22
         Title.TextColor3 = Color3.fromRGB(255, 255, 255)
         Title.ZIndex = 52
@@ -874,7 +1038,7 @@ function Chloex:Window(GuiConfig)
         end)
     end)
 
-    local ToggleKey = Enum.KeyCode.F3
+    local ToggleKey = Enum.KeyCode.G
     UserInputService.InputBegan:Connect(function(input, gpe)
         if gpe then return end
         if input.KeyCode == ToggleKey then
@@ -1034,13 +1198,13 @@ function Chloex:Window(GuiConfig)
     UICorner36.CornerRadius = UDim.new(0, 3)
     UICorner36.Parent = DropdownSelect
 
-    UIStroke14.Color = Color3.fromRGB(12, 159, 255)
+    UIStroke14.Color = Color3.fromRGB(180, 120, 255)
     UIStroke14.Thickness = 2.5
     UIStroke14.Transparency = 0.8
     UIStroke14.Parent = DropdownSelect
 
     DropdownSelectReal.AnchorPoint = Vector2.new(0.5, 0.5)
-    DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(0, 27, 98)
+    DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(180, 120, 255)
     DropdownSelectReal.BackgroundTransparency = 0.7
     DropdownSelectReal.BorderColor3 = Color3.fromRGB(0, 0, 0)
     DropdownSelectReal.BorderSizePixel = 0
@@ -1705,7 +1869,7 @@ function Chloex:Window(GuiConfig)
                     InputBox.FocusLost:Connect(function()
                         PanelFunc.Value = InputBox.Text
                         ConfigData[configKey] = InputBox.Text
-                        SaveConfig()
+                        -- Auto-save disabled - use manual save
                     end)
                 end
 
@@ -1925,7 +2089,7 @@ function Chloex:Window(GuiConfig)
                         if not ok then warn("Toggle Callback error:", err) end
                     end
                     ConfigData[configKey] = Value
-                    SaveConfig()
+                    -- Auto-save disabled - use manual save
                     if Value then
                         TweenService:Create(ToggleTitle, TweenInfo.new(0.2), { TextColor3 = GuiConfig.Color }):Play()
                         TweenService:Create(ToggleCircle, TweenInfo.new(0.2), { Position = UDim2.new(0, 15, 0, 0) })
@@ -2125,7 +2289,7 @@ function Chloex:Window(GuiConfig)
 
                     SliderConfig.Callback(Value)
                     ConfigData[configKey] = Value
-                    SaveConfig()
+                    -- Auto-save disabled - use manual save
                 end
 
                 SliderFrame.InputBegan:Connect(function(Input)
@@ -2300,7 +2464,7 @@ function Chloex:Window(GuiConfig)
                     InputFunc.Value = Value
                     InputConfig.Callback(Value)
                     ConfigData[configKey] = Value
-                    SaveConfig()
+                    -- Auto-save disabled - use manual save
                 end
 
                 InputFunc:Set(InputFunc.Value)
@@ -2312,7 +2476,7 @@ function Chloex:Window(GuiConfig)
                 Elements[configKey] = InputFunc
                 return InputFunc
             end
-
+            
             function Items:AddDropdown(DropdownConfig)
                 local DropdownConfig = DropdownConfig or {}
                 DropdownConfig.Title = DropdownConfig.Title or "Title"
@@ -2573,7 +2737,7 @@ function Chloex:Window(GuiConfig)
                     end
 
                     ConfigData[configKey] = DropdownFunc.Value
-                    SaveConfig()
+                    -- Auto-save disabled - use manual save
 
                     local texts = {}
                     for _, Drop in ScrollSelect:GetChildren() do
@@ -2700,6 +2864,183 @@ function Chloex:Window(GuiConfig)
 
                 CountItem = CountItem + 1
                 return SubSection
+            end
+
+            function Items:AddConfigPanel()
+                local selectedConfigName = CurrentConfigName or ""
+
+                -- Status Paragraph
+                local StatusParagraph = Items:AddParagraph({
+                    Title = "Config Manager",
+                    Content = "Current: " .. (CurrentConfigName or "None") .. " | Autoload: " .. (GetAutoload() or "None"),
+                    Icon = "settings"
+                })
+
+                -- Config Name Input
+                local ConfigNameInput = Items:AddInput({
+                    Title = "Config Name",
+                    Content = "Enter the name for your config",
+                    Placeholder = "e.g., Default, PVP, Farming",
+                    Default = CurrentConfigName or "",
+                    Callback = function(value)
+                        selectedConfigName = value
+                    end
+                })
+
+                -- Config List Dropdown
+                local configs = GetConfigList()
+                local ConfigDropdown = Items:AddDropdown({
+                    Title = "Select Config",
+                    Content = "Choose from existing configs",
+                    Options = configs,
+                    Default = nil,
+                    Callback = function(selected)
+                        selectedConfigName = selected
+                        ConfigNameInput:Set(selected)
+                    end
+                })
+
+                -- Save & Load Buttons
+                Items:AddButton({
+                    Title = "Save Config",
+                    SubTitle = "Load Config",
+                    Callback = function()
+                        if selectedConfigName ~= "" then
+                            if SaveConfigAs(selectedConfigName) then
+                                chloex("Config saved: " .. selectedConfigName, 3, Color3.fromRGB(100, 255, 100))
+                                -- Refresh dropdown
+                                local newConfigs = GetConfigList()
+                                ConfigDropdown:SetValues(newConfigs, selectedConfigName)
+                                StatusParagraph:SetContent("Current: " .. selectedConfigName .. " | Autoload: " .. (GetAutoload() or "None"))
+                            end
+                        else
+                            chloex("Please enter a config name", 3, Color3.fromRGB(255, 100, 100))
+                        end
+                    end,
+                    SubCallback = function()
+                        if selectedConfigName ~= "" then
+                            if LoadConfig(selectedConfigName) then
+                                chloex("Config loaded: " .. selectedConfigName, 3, Color3.fromRGB(100, 255, 100))
+                                StatusParagraph:SetContent("Current: " .. selectedConfigName .. " | Autoload: " .. (GetAutoload() or "None"))
+                            else
+                                chloex("Failed to load: " .. selectedConfigName, 3, Color3.fromRGB(255, 100, 100))
+                            end
+                        else
+                            chloex("Please select a config", 3, Color3.fromRGB(255, 100, 100))
+                        end
+                    end
+                })
+
+                -- Delete Config & Set Autoload
+                Items:AddButton({
+                    Title = "Delete Config",
+                    SubTitle = "Set Autoload",
+                    Callback = function()
+                        if selectedConfigName ~= "" then
+                            -- Confirm before delete
+                            chloex("Click again to confirm delete: " .. selectedConfigName, 4, Color3.fromRGB(255, 150, 100))
+                            task.wait(0.5)
+
+                            if DeleteConfig(selectedConfigName) then
+                                chloex("Config deleted: " .. selectedConfigName, 3, Color3.fromRGB(255, 100, 100))
+                                selectedConfigName = ""
+                                ConfigNameInput:Set("")
+
+                                -- Refresh dropdown
+                                local newConfigs = GetConfigList()
+                                ConfigDropdown:SetValues(newConfigs, nil)
+                                StatusParagraph:SetContent("Current: " .. (CurrentConfigName or "None") .. " | Autoload: " .. (GetAutoload() or "None"))
+                            end
+                        else
+                            chloex("Please select a config to delete", 3, Color3.fromRGB(255, 100, 100))
+                        end
+                    end,
+                    SubCallback = function()
+                        if selectedConfigName ~= "" then
+                            SetAutoload(selectedConfigName)
+                            chloex("Autoload set to: " .. selectedConfigName, 3, Color3.fromRGB(100, 200, 255))
+                            StatusParagraph:SetContent("Current: " .. (CurrentConfigName or "None") .. " | Autoload: " .. selectedConfigName)
+                        else
+                            chloex("Please enter a config name", 3, Color3.fromRGB(255, 100, 100))
+                        end
+                    end
+                })
+
+                -- Refresh & Clear Autoload
+                Items:AddButton({
+                    Title = "Refresh List",
+                    SubTitle = "Clear Autoload",
+                    Callback = function()
+                        local newConfigs = GetConfigList()
+                        ConfigDropdown:SetValues(newConfigs, nil)
+                        chloex("Config list refreshed (" .. #newConfigs .. " configs)", 2, Color3.fromRGB(150, 150, 255))
+                    end,
+                    SubCallback = function()
+                        ClearAutoload()
+                        chloex("Autoload cleared", 3, Color3.fromRGB(200, 200, 100))
+                        StatusParagraph:SetContent("Current: " .. (CurrentConfigName or "None") .. " | Autoload: None")
+                    end
+                })
+
+                -- Reset Elements Button
+                Items:AddButton({
+                    Title = "Reset All Elements to Default",
+                    Callback = function()
+                        ResetElements()
+                        chloex("All elements reset to default values", 3, Color3.fromRGB(255, 200, 100))
+                    end
+                })
+
+                Items:AddSubSection("Load From External")
+
+                local ExternalJSON = ""
+
+                local ExternalJSONInput = Items:AddInput({
+                    Title = "External Config JSON",
+                    Content = "Paste raw JSON config here",
+                    Placeholder = "{ \"Toggle_AutoFish\": true }",
+                    Callback = function(value)
+                        ExternalJSON = value
+                    end
+                })
+
+                -- Load External Config Button
+                Items:AddButton({
+                    Title = "Load External JSON",
+                    SubTitle = "Reset & Apply",
+                    Callback = function()
+                        if ExternalJSON == "" then
+                            chloex("External JSON is empty", 3, Color3.fromRGB(255, 100, 100))
+                            return
+                        end
+
+                        ResetElements()
+
+                        local ok, err = pcall(function()
+                            LoadExternalConfigFromJSON(ExternalJSON)
+                        end)
+
+                        if ok then
+                            chloex("External config loaded successfully", 3, Color3.fromRGB(100, 255, 100))
+                            StatusParagraph:SetContent(
+                                "Current: External JSON | Autoload: " .. (GetAutoload() or "None")
+                            )
+                        else
+                            chloex("Failed to load external JSON", 3, Color3.fromRGB(255, 100, 100))
+                        end
+                    end
+                })
+
+                -- Return functions for external manipulation
+                return {
+                    UpdateStatus = function()
+                        StatusParagraph:SetContent("Current: " .. (CurrentConfigName or "None") .. " | Autoload: " .. (GetAutoload() or "None"))
+                    end,
+                    RefreshList = function()
+                        local newConfigs = GetConfigList()
+                        ConfigDropdown:SetValues(newConfigs, nil)
+                    end
+                }
             end
 
             CountSection = CountSection + 1
