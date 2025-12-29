@@ -426,214 +426,179 @@ function CircleClick(Button, X, Y)
 end
 
 local Chloex = {}
+
 function Chloex:MakeNotify(NotifyConfig)
-    local NotifyConfig = NotifyConfig or {}
+    NotifyConfig = NotifyConfig or {}
     NotifyConfig.Title = NotifyConfig.Title or "ChloeX"
     NotifyConfig.Description = NotifyConfig.Description or "Notification"
     NotifyConfig.Content = NotifyConfig.Content or "Content"
     NotifyConfig.Color = NotifyConfig.Color or Color3.fromRGB(255, 0, 255)
     NotifyConfig.Time = NotifyConfig.Time or 0.5
     NotifyConfig.Delay = NotifyConfig.Delay or 5
+
     local NotifyFunction = {}
-    spawn(function()
+
+    task.spawn(function()
         if not CoreGui:FindFirstChild("NotifyGui") then
-            local NotifyGui = Instance.new("ScreenGui");
-            NotifyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+            local NotifyGui = Instance.new("ScreenGui")
             NotifyGui.Name = "NotifyGui"
+            NotifyGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
             NotifyGui.Parent = CoreGui
         end
+
         if not CoreGui.NotifyGui:FindFirstChild("NotifyLayout") then
-            local NotifyLayout = Instance.new("Frame");
+            local NotifyLayout = Instance.new("Frame")
+            NotifyLayout.Name = "NotifyLayout"
             NotifyLayout.AnchorPoint = Vector2.new(1, 1)
-            NotifyLayout.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-            NotifyLayout.BackgroundTransparency = 0.9990000128746033
-            NotifyLayout.BorderColor3 = Color3.fromRGB(0, 0, 0)
-            NotifyLayout.BorderSizePixel = 0
             NotifyLayout.Position = UDim2.new(1, -30, 1, -30)
             NotifyLayout.Size = UDim2.new(0, 320, 1, 0)
-            NotifyLayout.Name = "NotifyLayout"
+            NotifyLayout.BackgroundTransparency = 1
+            NotifyLayout.BorderSizePixel = 0
             NotifyLayout.Parent = CoreGui.NotifyGui
-            local Count = 0
+
             CoreGui.NotifyGui.NotifyLayout.ChildRemoved:Connect(function()
-                Count = 0
-                for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
+                local count = 0
+                for _, v in ipairs(CoreGui.NotifyGui.NotifyLayout:GetChildren()) do
                     TweenService:Create(
                         v,
                         TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
-                        { Position = UDim2.new(0, 0, 1, -((v.Size.Y.Offset + 12) * Count)) }
+                        { Position = UDim2.new(0, 0, 1, -((v.Size.Y.Offset + 12) * count)) }
                     ):Play()
-                    Count = Count + 1
+                    count += 1
                 end
             end)
         end
+
         local NotifyPosHeigh = 0
-        for i, v in CoreGui.NotifyGui.NotifyLayout:GetChildren() do
+        for _, v in ipairs(CoreGui.NotifyGui.NotifyLayout:GetChildren()) do
             NotifyPosHeigh = -(v.Position.Y.Offset) + v.Size.Y.Offset + 12
         end
-        local NotifyFrame = Instance.new("Frame");
-        local NotifyFrameReal = Instance.new("Frame");
-        local UICorner = Instance.new("UICorner");
-        local DropShadowHolder = Instance.new("Frame");
-        local DropShadow = Instance.new("ImageLabel");
-        local Top = Instance.new("Frame");
-        local TextLabel = Instance.new("TextLabel");
-        local UICorner1 = Instance.new("UICorner");
-        local TextLabel1 = Instance.new("TextLabel");
-        local Close = Instance.new("TextButton");
-        local ImageLabel = Instance.new("ImageLabel");
-        local TextLabel2 = Instance.new("TextLabel");
 
-        NotifyFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        NotifyFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        NotifyFrame.BorderSizePixel = 0
-        NotifyFrame.Size = UDim2.new(1, 0, 0, 150)
+        local NotifyFrame = Instance.new("Frame")
         NotifyFrame.Name = "NotifyFrame"
         NotifyFrame.BackgroundTransparency = 1
-        NotifyFrame.Parent = CoreGui.NotifyGui.NotifyLayout
+        NotifyFrame.BorderSizePixel = 0
+        NotifyFrame.Size = UDim2.new(1, 0, 0, 150)
         NotifyFrame.AnchorPoint = Vector2.new(0, 1)
-        NotifyFrame.Position = UDim2.new(0, 0, 1, -(NotifyPosHeigh))
+        NotifyFrame.Position = UDim2.new(0, 0, 1, -NotifyPosHeigh)
+        NotifyFrame.Parent = CoreGui.NotifyGui.NotifyLayout
 
+        local NotifyFrameReal = Instance.new("Frame")
+        NotifyFrameReal.Name = "NotifyFrameReal"
         NotifyFrameReal.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        NotifyFrameReal.BorderColor3 = Color3.fromRGB(0, 0, 0)
         NotifyFrameReal.BorderSizePixel = 0
         NotifyFrameReal.Position = UDim2.new(0, 400, 0, 0)
         NotifyFrameReal.Size = UDim2.new(1, 0, 1, 0)
-        NotifyFrameReal.Name = "NotifyFrameReal"
         NotifyFrameReal.Parent = NotifyFrame
 
-        UICorner.Parent = NotifyFrameReal
+        local UICorner = Instance.new("UICorner")
         UICorner.CornerRadius = UDim.new(0, 8)
+        UICorner.Parent = NotifyFrameReal
 
-        DropShadowHolder.BackgroundTransparency = 1
-        DropShadowHolder.BorderSizePixel = 0
-        DropShadowHolder.Size = UDim2.new(1, 0, 1, 0)
-        DropShadowHolder.ZIndex = 0
-        DropShadowHolder.Name = "DropShadowHolder"
-        DropShadowHolder.Parent = NotifyFrameReal
-
-        Top.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        Top.BackgroundTransparency = 0.9990000128746033
-        Top.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        Top.BorderSizePixel = 0
-        Top.Size = UDim2.new(1, 0, 0, 36)
+        local Top = Instance.new("Frame")
         Top.Name = "Top"
+        Top.Size = UDim2.new(1, 0, 0, 36)
+        Top.BackgroundTransparency = 1
+        Top.BorderSizePixel = 0
         Top.Parent = NotifyFrameReal
 
         local Icon = Instance.new("ImageLabel")
-        Icon.Name = "Icon"
         Icon.BackgroundTransparency = 1
         Icon.Size = UDim2.new(0, 50, 0, 50)
-        Icon.Position = UDim2.new({0, -12, 0.899999976, 0)
+        Icon.Position = UDim2.new(0, -12, 0.9, 0)
         Icon.AnchorPoint = Vector2.new(0, 0.5)
         Icon.Image = "rbxassetid://6859372539"
         Icon.Parent = Top
 
-        TextLabel.Position = UDim2.new(0, 44, 0, 0)
-        TextLabel.Size = UDim2.new(1, -44, 1, 0)
+        local Title = Instance.new("TextLabel")
+        Title.Font = Enum.Font.GothamBold
+        Title.Text = NotifyConfig.Title
+        Title.TextSize = 14
+        Title.TextXAlignment = Enum.TextXAlignment.Left
+        Title.BackgroundTransparency = 1
+        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Title.Size = UDim2.new(1, 0, 1, 0)
+        Title.Position = UDim2.new(0, 38, 0, 0)
+        Title.Parent = Top
 
-        TextLabel1.Position = UDim2.new(0, TextLabel.TextBounds.X + 50, 0, 0)
+        local Desc = Instance.new("TextLabel")
+        Desc.Font = Enum.Font.GothamBold
+        Desc.Text = NotifyConfig.Description
+        Desc.TextSize = 14
+        Desc.TextXAlignment = Enum.TextXAlignment.Left
+        Desc.BackgroundTransparency = 1
+        Desc.TextColor3 = NotifyConfig.Color
+        Desc.Size = UDim2.new(1, 0, 1, 0)
+        Desc.Position = UDim2.new(0, Title.TextBounds.X + 15, 0, 0)
+        Desc.Parent = Top
 
-        TextLabel.Font = Enum.Font.GothamBold
-        TextLabel.Text = NotifyConfig.Title
-        TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel.TextSize = 14
-        TextLabel.TextXAlignment = Enum.TextXAlignment.Left
-        TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel.BackgroundTransparency = 0.9990000128746033
-        TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        TextLabel.BorderSizePixel = 0
-        TextLabel.Size = UDim2.new(1, 0, 1, 0)
-        TextLabel.Parent = Top
-        TextLabel.Position = UDim2.new(0, 38, 0, 0)
-
-        UICorner1.Parent = Top
-        UICorner1.CornerRadius = UDim.new(0, 5)
-
-        TextLabel1.Font = Enum.Font.GothamBold
-        TextLabel1.Text = NotifyConfig.Description
-        TextLabel1.TextColor3 = NotifyConfig.Color
-        TextLabel1.TextSize = 14
-        TextLabel1.TextXAlignment = Enum.TextXAlignment.Left
-        TextLabel1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel1.BackgroundTransparency = 0.9990000128746033
-        TextLabel1.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        TextLabel1.BorderSizePixel = 0
-        TextLabel1.Size = UDim2.new(1, 0, 1, 0)
-        TextLabel1.Position = UDim2.new(0, TextLabel.TextBounds.X + 15, 0, 0)
-        TextLabel1.Parent = Top
-
-        Close.Font = Enum.Font.SourceSans
+        local Close = Instance.new("TextButton")
         Close.Text = ""
-        Close.TextColor3 = Color3.fromRGB(0, 0, 0)
-        Close.TextSize = 14
-        Close.AnchorPoint = Vector2.new(1, 0.5)
-        Close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        Close.BackgroundTransparency = 0.9990000128746033
-        Close.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        Close.BorderSizePixel = 0
-        Close.Position = UDim2.new(1, -5, 0.5, 0)
         Close.Size = UDim2.new(0, 25, 0, 25)
-        Close.Name = "Close"
+        Close.AnchorPoint = Vector2.new(1, 0.5)
+        Close.Position = UDim2.new(1, -5, 0.5, 0)
+        Close.BackgroundTransparency = 1
+        Close.BorderSizePixel = 0
         Close.Parent = Top
 
-        ImageLabel.Image = "rbxassetid://9886659671"
-        ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-        ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        ImageLabel.BackgroundTransparency = 0.9990000128746033
-        ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        ImageLabel.BorderSizePixel = 0
-        ImageLabel.Position = UDim2.new(0.49000001, 0, 0.5, 0)
-        ImageLabel.Size = UDim2.new(1, -8, 1, -8)
-        ImageLabel.Parent = Close
+        local CloseIcon = Instance.new("ImageLabel")
+        CloseIcon.Image = "rbxassetid://9886659671"
+        CloseIcon.BackgroundTransparency = 1
+        CloseIcon.Size = UDim2.new(1, -8, 1, -8)
+        CloseIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+        CloseIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+        CloseIcon.Parent = Close
 
-        TextLabel2.Font = Enum.Font.GothamBold
-        TextLabel2.TextColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel2.TextSize = 13
-        TextLabel2.Text = NotifyConfig.Content
-        TextLabel2.TextXAlignment = Enum.TextXAlignment.Left
-        TextLabel2.TextYAlignment = Enum.TextYAlignment.Top
-        TextLabel2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        TextLabel2.BackgroundTransparency = 0.9990000128746033
-        TextLabel2.TextColor3 = Color3.fromRGB(150, 150, 150)
-        TextLabel2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-        TextLabel2.BorderSizePixel = 0
-        TextLabel2.Position = UDim2.new(0, 38, 0, 27)
-        TextLabel2.Parent = NotifyFrameReal
+        local Content = Instance.new("TextLabel")
+        Content.Font = Enum.Font.GothamBold
+        Content.Text = NotifyConfig.Content
+        Content.TextWrapped = true
+        Content.TextXAlignment = Enum.TextXAlignment.Left
+        Content.TextYAlignment = Enum.TextYAlignment.Top
+        Content.TextSize = 13
+        Content.BackgroundTransparency = 1
+        Content.TextColor3 = Color3.fromRGB(150, 150, 150)
+        Content.Position = UDim2.new(0, 38, 0, 27)
+        Content.Size = UDim2.new(1, -20, 0, 13)
+        Content.Parent = NotifyFrameReal
 
-        TextLabel2.Size = UDim2.new(1, -20, 0, 13 + (13 * (TextLabel2.TextBounds.X // TextLabel2.AbsoluteSize.X)))
-        TextLabel2.TextWrapped = true
+        task.wait()
+        local lines = math.max(1, math.ceil(Content.TextBounds.X / math.max(1, Content.AbsoluteSize.X)))
+        Content.Size = UDim2.new(1, -20, 0, 13 + (13 * (lines - 1)))
 
-        if TextLabel2.AbsoluteSize.Y < 27 then
+        if Content.AbsoluteSize.Y < 27 then
             NotifyFrame.Size = UDim2.new(1, 0, 0, 65)
         else
-            NotifyFrame.Size = UDim2.new(1, 0, 0, TextLabel2.AbsoluteSize.Y + 40)
+            NotifyFrame.Size = UDim2.new(1, 0, 0, Content.AbsoluteSize.Y + 40)
         end
-        local waitbruh = false
+
+        local closed = false
         function NotifyFunction:Close()
-            if waitbruh then
-                return false
-            end
-            waitbruh = true
+            if closed then return end
+            closed = true
             TweenService:Create(
                 NotifyFrameReal,
-                TweenInfo.new(tonumber(NotifyConfig.Time), Enum.EasingStyle.Back, Enum.EasingDirection.InOut),
+                TweenInfo.new(NotifyConfig.Time, Enum.EasingStyle.Back, Enum.EasingDirection.InOut),
                 { Position = UDim2.new(0, 400, 0, 0) }
             ):Play()
-            task.wait(tonumber(NotifyConfig.Time) / 1.2)
+            task.wait(NotifyConfig.Time / 1.2)
             NotifyFrame:Destroy()
         end
 
         Close.Activated:Connect(function()
             NotifyFunction:Close()
         end)
+
         TweenService:Create(
             NotifyFrameReal,
-            TweenInfo.new(tonumber(NotifyConfig.Time), Enum.EasingStyle.Back, Enum.EasingDirection.InOut),
+            TweenInfo.new(NotifyConfig.Time, Enum.EasingStyle.Back, Enum.EasingDirection.InOut),
             { Position = UDim2.new(0, 0, 0, 0) }
         ):Play()
-        task.wait(tonumber(NotifyConfig.Delay))
+
+        task.wait(NotifyConfig.Delay)
         NotifyFunction:Close()
     end)
+
     return NotifyFunction
 end
 
