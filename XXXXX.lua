@@ -2348,7 +2348,7 @@ function Chloex:Window(GuiConfig)
             end
 
             function Items:AddInput(InputConfig)
-                local InputConfig = InputConfig or {}
+                InputConfig = InputConfig or {}
                 InputConfig.Title = InputConfig.Title or "Title"
                 InputConfig.Content = InputConfig.Content or ""
                 InputConfig.Callback = InputConfig.Callback or function() end
@@ -2361,122 +2361,87 @@ function Chloex:Window(GuiConfig)
 
                 local InputFunc = { Value = InputConfig.Default }
 
-                local Input = Instance.new("Frame");
-                local UICorner12 = Instance.new("UICorner");
-                local InputTitle = Instance.new("TextLabel");
-                local InputContent = Instance.new("TextLabel");
-                local InputFrame = Instance.new("Frame");
-                local UICorner13 = Instance.new("UICorner");
-                local InputTextBox = Instance.new("TextBox");
+                local Input = Instance.new("Frame")
+                local UICorner12 = Instance.new("UICorner")
+                local InputTitle = Instance.new("TextLabel")
+                local InputContent = Instance.new("TextLabel")
+                local InputFrame = Instance.new("Frame")
+                local UICorner13 = Instance.new("UICorner")
+                local InputTextBox = Instance.new("TextBox")
 
-                Input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                Input.BackgroundTransparency = 0.9350000023841858
-                Input.BorderColor3 = Color3.fromRGB(0, 0, 0)
+                Input.BackgroundTransparency = 0.935
                 Input.BorderSizePixel = 0
                 Input.LayoutOrder = CountItem
                 Input.Size = UDim2.new(1, 0, 0, 46)
-                Input.Name = "Input"
                 Input.Parent = SectionAdd
 
                 UICorner12.CornerRadius = UDim.new(0, 4)
                 UICorner12.Parent = Input
 
                 InputTitle.Font = Enum.Font.GothamBold
-                InputTitle.Text = InputConfig.Title or "TextBox"
-                InputTitle.TextColor3 = Color3.fromRGB(230.77499270439148, 230.77499270439148, 230.77499270439148)
+                InputTitle.Text = InputConfig.Title
                 InputTitle.TextSize = 13
                 InputTitle.TextXAlignment = Enum.TextXAlignment.Left
-                InputTitle.TextYAlignment = Enum.TextYAlignment.Top
-                InputTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                InputTitle.BackgroundTransparency = 0.9990000128746033
-                InputTitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                InputTitle.BorderSizePixel = 0
+                InputTitle.BackgroundTransparency = 1
                 InputTitle.Position = UDim2.new(0, 10, 0, 10)
                 InputTitle.Size = UDim2.new(1, -180, 0, 13)
-                InputTitle.Name = "InputTitle"
                 InputTitle.Parent = Input
 
                 InputContent.Font = Enum.Font.GothamBold
-                InputContent.Text = InputConfig.Content or "This is a TextBox"
-                InputContent.TextColor3 = Color3.fromRGB(255, 255, 255)
+                InputContent.Text = InputConfig.Content
                 InputContent.TextSize = 12
-                InputContent.TextTransparency = 0.6000000238418579
+                InputContent.TextTransparency = 0.6
                 InputContent.TextWrapped = true
                 InputContent.TextXAlignment = Enum.TextXAlignment.Left
-                InputContent.TextYAlignment = Enum.TextYAlignment.Bottom
-                InputContent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                InputContent.BackgroundTransparency = 0.9990000128746033
-                InputContent.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                InputContent.BorderSizePixel = 0
+                InputContent.BackgroundTransparency = 1
                 InputContent.Position = UDim2.new(0, 10, 0, 25)
                 InputContent.Size = UDim2.new(1, -180, 0, 12)
-                InputContent.Name = "InputContent"
                 InputContent.Parent = Input
 
-                InputContent.Size = UDim2.new(1, -180, 0,
-                    12 + (12 * (InputContent.TextBounds.X // InputContent.AbsoluteSize.X)))
-                InputContent.TextWrapped = true
-                Input.Size = UDim2.new(1, 0, 0, InputContent.AbsoluteSize.Y + 33)
-
-                InputContent:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-                    InputContent.TextWrapped = false
-                    InputContent.Size = UDim2.new(1, -180, 0,
-                        12 + (12 * (InputContent.TextBounds.X // InputContent.AbsoluteSize.X)))
-                    Input.Size = UDim2.new(1, 0, 0, InputContent.AbsoluteSize.Y + 33)
-                    InputContent.TextWrapped = true
-                    UpdateSizeSection()
-                end)
-
                 InputFrame.AnchorPoint = Vector2.new(1, 0.5)
-                InputFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                InputFrame.BackgroundTransparency = 0.949999988079071
-                InputFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+                InputFrame.BackgroundTransparency = 0.95
                 InputFrame.BorderSizePixel = 0
                 InputFrame.ClipsDescendants = true
                 InputFrame.Position = UDim2.new(1, -7, 0.5, 0)
                 InputFrame.Size = UDim2.new(0, 148, 0, 30)
-                InputFrame.Name = "InputFrame"
                 InputFrame.Parent = Input
 
                 UICorner13.CornerRadius = UDim.new(0, 4)
                 UICorner13.Parent = InputFrame
 
-                InputTextBox.CursorPosition = -1
                 InputTextBox.Font = Enum.Font.GothamBold
-                InputTextBox.PlaceholderColor3 = Color3.fromRGB(120.00000044703484, 120.00000044703484,
-                    120.00000044703484)
                 InputTextBox.PlaceholderText = "Input Here"
                 InputTextBox.Text = InputConfig.Default
-                InputTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
                 InputTextBox.TextSize = 12
                 InputTextBox.TextXAlignment = Enum.TextXAlignment.Left
-                InputTextBox.AnchorPoint = Vector2.new(0, 0.5)
-                InputTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                InputTextBox.BackgroundTransparency = 0.9990000128746033
-                InputTextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                InputTextBox.BorderSizePixel = 0
+                InputTextBox.BackgroundTransparency = 1
                 InputTextBox.Position = UDim2.new(0, 5, 0.5, 0)
                 InputTextBox.Size = UDim2.new(1, -10, 1, -8)
-                InputTextBox.Name = "InputTextBox"
                 InputTextBox.Parent = InputFrame
+
                 function InputFunc:Set(Value)
-                    InputTextBox.Text = Value
                     InputFunc.Value = Value
-                    InputConfig.Callback(Value)
+                    InputTextBox.Text = Value
                     ConfigData[configKey] = Value
-                    -- Auto-save disabled - use manual save
+                    InputConfig.Callback(Value)
                 end
 
-                InputFunc:Set(InputFunc.Value)
+                InputTextBox:GetPropertyChangedSignal("Text"):Connect(function()
+                    InputFunc.Value = InputTextBox.Text
+                    ConfigData[configKey] = InputTextBox.Text
+                end)
 
                 InputTextBox.FocusLost:Connect(function()
                     InputFunc:Set(InputTextBox.Text)
                 end)
-                CountItem = CountItem + 1
+
+                InputFunc:Set(InputFunc.Value)
+
+                CountItem += 1
                 Elements[configKey] = InputFunc
                 return InputFunc
             end
-            
+                        
             function Items:AddDropdown(DropdownConfig)
                 local DropdownConfig = DropdownConfig or {}
                 DropdownConfig.Title = DropdownConfig.Title or "Title"
@@ -2737,7 +2702,7 @@ function Chloex:Window(GuiConfig)
                     end
 
                     ConfigData[configKey] = DropdownFunc.Value
-                    -- Auto-save disabled - use manual save
+                    SaveConfig()
 
                     local texts = {}
                     for _, Drop in ScrollSelect:GetChildren() do
