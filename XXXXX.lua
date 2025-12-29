@@ -529,7 +529,7 @@ function Chloex:MakeNotify(NotifyConfig)
         Desc.BackgroundTransparency = 1
         Desc.TextColor3 = NotifyConfig.Color
         Desc.Size = UDim2.new(1, 0, 1, 0)
-        Desc.Position = UDim2.new(0, 87, 0, 0)
+        Desc.Position = UDim2.new(0, 90, 0, 0)
         Desc.Parent = Top
 
         local Close = Instance.new("TextButton")
