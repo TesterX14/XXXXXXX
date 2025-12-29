@@ -522,8 +522,8 @@ function Chloex:MakeNotify(NotifyConfig)
         local Icon = Instance.new("ImageLabel")
         Icon.Name = "Icon"
         Icon.BackgroundTransparency = 1
-        Icon.Size = UDim2.new(0, 28, 0, 28)
-        Icon.Position = UDim2.new(0, 10, 0.5, 0)
+        Icon.Size = UDim2.new(0, 50, 0, 50)
+        Icon.Position = UDim2.new({0, -12, 0.899999976, 0)
         Icon.AnchorPoint = Vector2.new(0, 0.5)
         Icon.Image = "rbxassetid://6859372539"
         Icon.Parent = Top
@@ -544,7 +544,7 @@ function Chloex:MakeNotify(NotifyConfig)
         TextLabel.BorderSizePixel = 0
         TextLabel.Size = UDim2.new(1, 0, 1, 0)
         TextLabel.Parent = Top
-        TextLabel.Position = UDim2.new(0, 10, 0, 0)
+        TextLabel.Position = UDim2.new(0, 38, 0, 0)
 
         UICorner1.Parent = Top
         UICorner1.CornerRadius = UDim.new(0, 5)
@@ -597,7 +597,7 @@ function Chloex:MakeNotify(NotifyConfig)
         TextLabel2.TextColor3 = Color3.fromRGB(150.0000062584877, 150.0000062584877, 150.0000062584877)
         TextLabel2.BorderColor3 = Color3.fromRGB(0, 0, 0)
         TextLabel2.BorderSizePixel = 0
-        TextLabel2.Position = UDim2.new(0, 10, 0, 27)
+        TextLabel2.Position = UDim2.new(0, 38, 0, 27)
         TextLabel2.Parent = NotifyFrameReal
         TextLabel2.Size = UDim2.new(1, -20, 0, 13)
 
