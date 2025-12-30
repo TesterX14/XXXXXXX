@@ -2935,8 +2935,8 @@ function Chloex:Window(GuiConfig)
                 Label.BackgroundTransparency = 1
                 Label.Font = Enum.Font.GothamBold
                 Label.Text = "── [ " .. title .. " ] ──"
-                Label.TextColor3 = Color3.fromRGB(230, 230, 230)
-                Label.TextSize = 12
+                Label.TextColor3 = Color3.fromRGB(0, 208, 255)
+                Label.TextSize = 13
                 Label.TextXAlignment = Enum.TextXAlignment.Left
 
                 CountItem = CountItem + 1
