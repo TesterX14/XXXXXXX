@@ -529,7 +529,7 @@ function Chloex:MakeNotify(NotifyConfig)
         Desc.BackgroundTransparency = 1
         Desc.TextColor3 = NotifyConfig.Color
         Desc.Size = UDim2.new(1, 0, 1, 0)
-        Desc.Position = UDim2.new(0, Title.TextBounds.X + 15, 0, 0)
+        Desc.Position = UDim2.new(0, 87, 0, 0)
         Desc.Parent = Top
 
         local Close = Instance.new("TextButton")
@@ -733,8 +733,6 @@ function Chloex:Window(GuiConfig)
     GuiConfig.Color        = GuiConfig.Color or Color3.fromRGB(255, 0, 255)
     GuiConfig["Tab Width"] = GuiConfig["Tab Width"] or 120
     GuiConfig.Version      = GuiConfig.Version or 1
-
-    CURRENT_VERSION        = GuiConfig.Version
 
     local autoloadName = GetAutoload()
     if autoloadName then
@@ -1032,7 +1030,7 @@ function Chloex:Window(GuiConfig)
         local Dialog = Instance.new("ImageLabel")
         Dialog.Size = UDim2.new(0, 300, 0, 150)
         Dialog.Position = UDim2.new(0.5, -150, 0.5, -75)
-        Dialog.Image = "rbxassetid://107443308956559"
+        Dialog.Image = "rbxassetid://9542022979"
         Dialog.ImageTransparency = 0
         Dialog.BorderSizePixel = 0
         Dialog.ZIndex = 51
@@ -1126,16 +1124,6 @@ function Chloex:Window(GuiConfig)
         Cancel.MouseButton1Click:Connect(function()
             Overlay:Destroy()
         end)
-    end)
-
-    local ToggleKey = Enum.KeyCode.G
-    UserInputService.InputBegan:Connect(function(input, gpe)
-        if gpe then return end
-        if input.KeyCode == ToggleKey then
-            if DropShadowHolder then
-                DropShadowHolder.Visible = not DropShadowHolder.Visible
-            end
-        end
     end)
 
     function GuiFunc:ToggleUI()
@@ -1295,8 +1283,8 @@ function Chloex:Window(GuiConfig)
     UIStroke14.Parent = DropdownSelect
 
     DropdownSelectReal.AnchorPoint = Vector2.new(0.5, 0.5)
-    DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(0, 208, 255)
-    DropdownSelectReal.BackgroundTransparency = 0.7
+    DropdownSelectReal.BackgroundColor3 = Color3.fromRGB(0, 31, 55)
+    DropdownSelectReal.BackgroundTransparency = 0
     DropdownSelectReal.BorderColor3 = Color3.fromRGB(0, 0, 0)
     DropdownSelectReal.BorderSizePixel = 0
     DropdownSelectReal.LayoutOrder = 1
@@ -1979,6 +1967,9 @@ function Chloex:Window(GuiConfig)
                 ButtonConfig.SubTitle = ButtonConfig.SubTitle or nil
                 ButtonConfig.SubCallback = ButtonConfig.SubCallback or function() end
 
+                local ICON_IDLE = "rbxassetid://11128718799"
+                local ICON_CLICK = "rbxassetid://6860051781"
+
                 local Button = Instance.new("Frame")
                 Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Button.BackgroundTransparency = 0.935
@@ -1998,17 +1989,58 @@ function Chloex:Window(GuiConfig)
                 MainButton.TextTransparency = 0.3
                 MainButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 MainButton.BackgroundTransparency = 0.935
-                MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -8, 1, -10) or UDim2.new(1, -12, 1, -10)
+                MainButton.Size = ButtonConfig.SubTitle and UDim2.new(0.5, -12, 1, -10) or UDim2.new(1, -12, 1, -10)
                 MainButton.Position = UDim2.new(0, 6, 0, 5)
                 MainButton.Parent = Button
+                MainButton.AutoButtonColor = false
+                MainButton.TextXAlignment = Enum.TextXAlignment.Center
+                MainButton.TextYAlignment = Enum.TextYAlignment.Center
 
                 local mainCorner = Instance.new("UICorner")
                 mainCorner.CornerRadius = UDim.new(0, 4)
                 mainCorner.Parent = MainButton
 
+                local Icon = Instance.new("ImageLabel")
+                Icon.BackgroundTransparency = 1
+                Icon.Size = UDim2.new(0, 20, 0, 20)
+                Icon.AnchorPoint = Vector2.new(0, 0.5)
+                Icon.Position = UDim2.new(0, 0, 0.5, 0)
+                Icon.Image = ICON_IDLE
+                Icon.Parent = MainButton
+
+                local function flash(btn, icon)
+                    if icon then
+                        icon.Image = ICON_CLICK
+                    end
+
+                    TweenService:Create(
+                        btn,
+                        TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                        { BackgroundTransparency = 0.85 }
+                    ):Play()
+
+                    task.delay(0.12, function()
+                        TweenService:Create(
+                            btn,
+                            TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            { BackgroundTransparency = 0.935 }
+                        ):Play()
+
+                        if icon then
+                            icon.Image = ICON_IDLE
+                        end
+                    end)
+                end
+
+                MainButton.MouseButton1Down:Connect(function()
+                    flash(MainButton, Icon)
+                end)
+
                 MainButton.MouseButton1Click:Connect(ButtonConfig.Callback)
 
                 if ButtonConfig.SubTitle then
+                    Icon.Visible = false
+
                     local SubButton = Instance.new("TextButton")
                     SubButton.Font = Enum.Font.GothamBold
                     SubButton.Text = ButtonConfig.SubTitle
@@ -2020,10 +2052,15 @@ function Chloex:Window(GuiConfig)
                     SubButton.Size = UDim2.new(0.5, -8, 1, -10)
                     SubButton.Position = UDim2.new(0.5, 2, 0, 5)
                     SubButton.Parent = Button
+                    SubButton.AutoButtonColor = false
 
                     local subCorner = Instance.new("UICorner")
                     subCorner.CornerRadius = UDim.new(0, 4)
                     subCorner.Parent = SubButton
+
+                    SubButton.MouseButton1Down:Connect(function()
+                        flash(SubButton)
+                    end)
 
                     SubButton.MouseButton1Click:Connect(ButtonConfig.SubCallback)
                 end
