@@ -529,7 +529,7 @@ function Chloex:MakeNotify(NotifyConfig)
         Desc.BackgroundTransparency = 1
         Desc.TextColor3 = NotifyConfig.Color
         Desc.Size = UDim2.new(1, 0, 1, 0)
-        Desc.Position = UDim2.new(0, 87, 0, 0)
+        Desc.Position = UDim2.new(0, 90, 0, 0)
         Desc.Parent = Top
 
         local Close = Instance.new("TextButton")
@@ -2475,107 +2475,153 @@ function Chloex:Window(GuiConfig)
                 return SliderFunc
             end
 
-            function Items:AddInput(InputConfig)
-                InputConfig = InputConfig or {}
-                InputConfig.Title = InputConfig.Title or "Title"
-                InputConfig.Content = InputConfig.Content or ""
-                InputConfig.Callback = InputConfig.Callback or function() end
-                InputConfig.Default = InputConfig.Default or ""
+function Items:AddInput(InputConfig)
+    InputConfig = InputConfig or {}
+    InputConfig.Title = InputConfig.Title or "Title"
+    InputConfig.Callback = InputConfig.Callback or function() end
+    InputConfig.Default = InputConfig.Default or ""
 
-                local configKey = "Input_" .. InputConfig.Title
-                if ConfigData[configKey] ~= nil then
-                    InputConfig.Default = ConfigData[configKey]
-                end
+    local configKey = "Input_" .. InputConfig.Title
+    if ConfigData[configKey] ~= nil then
+        InputConfig.Default = ConfigData[configKey]
+    end
 
-                local InputFunc = { Value = InputConfig.Default }
+    local InputFunc = { Value = InputConfig.Default }
 
-                local Input = Instance.new("Frame")
-                local UICorner12 = Instance.new("UICorner")
-                local InputTitle = Instance.new("TextLabel")
-                local InputContent = Instance.new("TextLabel")
-                local InputFrame = Instance.new("Frame")
-                local UICorner13 = Instance.new("UICorner")
-                local InputTextBox = Instance.new("TextBox")
+    local Input = Instance.new("Frame")
+    local UICorner = Instance.new("UICorner")
+    local InputTitle = Instance.new("TextLabel")
+    local InputTextBox = Instance.new("TextBox")
 
-                Input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                Input.BackgroundTransparency = 0.935
-                Input.BorderSizePixel = 0
-                Input.LayoutOrder = CountItem
-                Input.Size = UDim2.new(1, 0, 0, 46)
-                Input.Parent = SectionAdd
+    Input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Input.BackgroundTransparency = 0.935
+    Input.BorderSizePixel = 0
+    Input.LayoutOrder = CountItem
+    Input.Size = UDim2.new(1, 0, 0, 58)
+    Input.Parent = SectionAdd
 
-                UICorner12.CornerRadius = UDim.new(0, 4)
-                UICorner12.Parent = Input
+    UICorner.CornerRadius = UDim.new(0, 4)
+    UICorner.Parent = Input
 
-                InputTitle.Font = Enum.Font.GothamBold
-                InputTitle.Text = InputConfig.Title
-                InputTitle.TextSize = 13
-                InputTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-                InputTitle.TextXAlignment = Enum.TextXAlignment.Left
-                InputTitle.BackgroundTransparency = 1
-                InputTitle.Position = UDim2.new(0, 10, 0, 10)
-                InputTitle.Size = UDim2.new(1, -180, 0, 13)
-                InputTitle.Parent = Input
+    -- Title (kiri atas)
+    InputTitle.Font = Enum.Font.GothamBold
+    InputTitle.Text = InputConfig.Title
+    InputTitle.TextSize = 13
+    InputTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    InputTitle.TextXAlignment = Enum.TextXAlignment.Left
+    InputTitle.BackgroundTransparency = 1
+    InputTitle.Position = UDim2.new(0, 10, 0, 6)
+    InputTitle.Size = UDim2.new(1, -20, 0, 14)
+    InputTitle.Parent = Input
 
-                InputContent.Font = Enum.Font.GothamBold
-                InputContent.Text = InputConfig.Content
-                InputContent.TextSize = 12
-                InputContent.TextColor3 = Color3.fromRGB(255, 255, 255)
-                InputContent.TextTransparency = 0.6
-                InputContent.TextWrapped = true
-                InputContent.TextXAlignment = Enum.TextXAlignment.Left
-                InputContent.BackgroundTransparency = 1
-                InputContent.Position = UDim2.new(0, 10, 0, 25)
-                InputContent.Size = UDim2.new(1, -180, 0, 12)
-                InputContent.Parent = Input
+    -- TextBox (FULL kanan kiri)
+    InputTextBox.Font = Enum.Font.GothamBold
+    InputTextBox.PlaceholderText = "Input Here"
+    InputTextBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
+    InputTextBox.Text = InputConfig.Default
+    InputTextBox.TextSize = 12
+    InputTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    InputTextBox.BackgroundTransparency = 0.92
+    InputTextBox.TextXAlignment = Enum.TextXAlignment.Left
+    InputTextBox.Position = UDim2.new(0, 10, 0, 26)
+    InputTextBox.Size = UDim2.new(1, -20, 0, 24)
+    InputTextBox.Parent = Input
 
-                InputFrame.AnchorPoint = Vector2.new(1, 0.5)
-                InputFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                InputFrame.BackgroundTransparency = 0.95
-                InputFrame.BorderSizePixel = 0
-                InputFrame.ClipsDescendants = true
-                InputFrame.Position = UDim2.new(1, -7, 0.5, 0)
-                InputFrame.Size = UDim2.new(0, 148, 0, 30)
-                InputFrame.Parent = Input
+    function InputFunc:Set(Value)
+        InputFunc.Value = Value
+        InputTextBox.Text = Value
+        ConfigData[configKey] = Value
+        InputConfig.Callback(Value)
+    end
 
-                UICorner13.CornerRadius = UDim.new(0, 4)
-                UICorner13.Parent = InputFrame
+    InputTextBox:GetPropertyChangedSignal("Text"):Connect(function()
+        InputFunc.Value = InputTextBox.Text
+        ConfigData[configKey] = InputTextBox.Text
+    end)
 
-                InputTextBox.Font = Enum.Font.GothamBold
-                InputTextBox.PlaceholderText = "Input Here"
-                InputTextBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
-                InputTextBox.Text = InputConfig.Default
-                InputTextBox.TextSize = 12
-                InputTextBox.BackgroundTransparency = 0.5
-                InputTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-                InputTextBox.TextXAlignment = Enum.TextXAlignment.Left
-                InputTextBox.BackgroundTransparency = 1
-                InputTextBox.Position = UDim2.new(0, 5, 0.1, 0)
-                InputTextBox.Size = UDim2.new(1, -10, 1, -8)
-                InputTextBox.Parent = InputFrame
+    InputTextBox.FocusLost:Connect(function()
+        InputFunc:Set(InputTextBox.Text)
+    end)
 
-                function InputFunc:Set(Value)
-                    InputFunc.Value = Value
-                    InputTextBox.Text = Value
-                    ConfigData[configKey] = Value
-                    InputConfig.Callback(Value)
-                end
+    InputFunc:Set(InputFunc.Value)
 
-                InputTextBox:GetPropertyChangedSignal("Text"):Connect(function()
-                    InputFunc.Value = InputTextBox.Text
-                    ConfigData[configKey] = InputTextBox.Text
-                end)
+    CountItem += 1
+    Elements[configKey] = InputFunc
+    return InputFunc
+end
 
-                InputTextBox.FocusLost:Connect(function()
-                    InputFunc:Set(InputTextBox.Text)
-                end)
+    function Items:AddInput(InputConfig)
+        InputConfig = InputConfig or {}
+        InputConfig.Title = InputConfig.Title or "Title"
+        InputConfig.Callback = InputConfig.Callback or function() end
+        InputConfig.Default = InputConfig.Default or ""
 
-                InputFunc:Set(InputFunc.Value)
+        local configKey = "Input_" .. InputConfig.Title
+        if ConfigData[configKey] ~= nil then
+            InputConfig.Default = ConfigData[configKey]
+        end
 
-                CountItem += 1
-                Elements[configKey] = InputFunc
-                return InputFunc
-            end
+        local InputFunc = { Value = InputConfig.Default }
+
+        local Input = Instance.new("Frame")
+        local UICorner = Instance.new("UICorner")
+        local InputTitle = Instance.new("TextLabel")
+        local InputTextBox = Instance.new("TextBox")
+
+        Input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Input.BackgroundTransparency = 0.935
+        Input.BorderSizePixel = 0
+        Input.LayoutOrder = CountItem
+        Input.Size = UDim2.new(1, 0, 0, 58)
+        Input.Parent = SectionAdd
+
+        UICorner.CornerRadius = UDim.new(0, 4)
+        UICorner.Parent = Input
+
+        InputTitle.Font = Enum.Font.GothamBold
+        InputTitle.Text = InputConfig.Title
+        InputTitle.TextSize = 13
+        InputTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        InputTitle.TextXAlignment = Enum.TextXAlignment.Left
+        InputTitle.BackgroundTransparency = 1
+        InputTitle.Position = UDim2.new(0, 10, 0, 6)
+        InputTitle.Size = UDim2.new(1, -20, 0, 14)
+        InputTitle.Parent = Input
+
+        InputTextBox.Font = Enum.Font.GothamBold
+        InputTextBox.PlaceholderText = "Input Here"
+        InputTextBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
+        InputTextBox.Text = InputConfig.Default
+        InputTextBox.TextSize = 12
+        InputTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        InputTextBox.BackgroundTransparency = 0.92
+        InputTextBox.TextXAlignment = Enum.TextXAlignment.Left
+        InputTextBox.Position = UDim2.new(0, 10, 0, 26)
+        InputTextBox.Size = UDim2.new(1, -20, 0, 24)
+        InputTextBox.Parent = Input
+
+        function InputFunc:Set(Value)
+            InputFunc.Value = Value
+            InputTextBox.Text = Value
+            ConfigData[configKey] = Value
+            InputConfig.Callback(Value)
+        end
+
+        InputTextBox:GetPropertyChangedSignal("Text"):Connect(function()
+            InputFunc.Value = InputTextBox.Text
+            ConfigData[configKey] = InputTextBox.Text
+        end)
+
+        InputTextBox.FocusLost:Connect(function()
+            InputFunc:Set(InputTextBox.Text)
+        end)
+
+        InputFunc:Set(InputFunc.Value)
+
+        CountItem += 1
+        Elements[configKey] = InputFunc
+        return InputFunc
+    end
                         
             function Items:AddDropdown(DropdownConfig)
                 local DropdownConfig = DropdownConfig or {}
