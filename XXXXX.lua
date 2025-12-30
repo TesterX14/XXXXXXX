@@ -753,21 +753,21 @@ function Chloex:Window(GuiConfig)
 		task.wait()
 	end
 
-    GuiConfig              = GuiConfig or {}
-    GuiConfig.Title        = GuiConfig.Title or "Chloe X"
-    GuiConfig.Footer       = GuiConfig.Footer or "Chloee :3"
-    GuiConfig.Color        = GuiConfig.Color or Color3.fromRGB(0, 208, 255)
-    GuiConfig["Tab Width"] = GuiConfig["Tab Width"] or 120
-    GuiConfig.Version      = GuiConfig.Version or 1
+	GuiConfig = GuiConfig or {}
+	GuiConfig.Title = GuiConfig.Title or "Chloe X"
+	GuiConfig.Footer = GuiConfig.Footer or "Chloee :3"
+	GuiConfig.Color = GuiConfig.Color or Color3.fromRGB(0, 208, 255)
+	GuiConfig["Tab Width"] = GuiConfig["Tab Width"] or 120
+	GuiConfig.Version = GuiConfig.Version or 1
 
-    CURRENT_VERSION        = GuiConfig.Version
+	CURRENT_VERSION = GuiConfig.Version
 
-    local autoloadName = GetAutoload()
-    if autoloadName then
-        LoadConfig(autoloadName)
-    else
-        ConfigData = { _version = CURRENT_VERSION }
-    endonfigData = { _version = CURRENT_VERSION }
+	local autoloadName = GetAutoload()
+	if autoloadName then
+		LoadConfig(autoloadName)
+	else
+		ConfigData = { _version = CURRENT_VERSION }
+		endonfigData = { _version = CURRENT_VERSION }
 	end
 
 	local GuiFunc = {}
@@ -2474,16 +2474,14 @@ function Chloex:Window(GuiConfig)
 					Value = math.clamp(Round(Value, SliderConfig.Increment), SliderConfig.Min, SliderConfig.Max)
 					SliderFunc.Value = Value
 					TextBox.Text = tostring(Value)
-					TweenService:Create(
-						SliderDraggable,
-						TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-						{
+					TweenService
+						:Create(SliderDraggable, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 							Size = UDim2.fromScale(
 								(Value - SliderConfig.Min) / (SliderConfig.Max - SliderConfig.Min),
 								1
 							),
-						}
-					):Play()
+						})
+						:Play()
 
 					SliderConfig.Callback(Value)
 					ConfigData[configKey] = Value
@@ -3071,7 +3069,7 @@ function Chloex:Window(GuiConfig)
 							if SaveConfigAs(selectedConfigName) then
 								chloex("Config saved: " .. selectedConfigName, 3, Color3.fromRGB(100, 255, 100))
 								local newConfigs = GetConfigList()
-								ConfigDropdown:Set(newConfigs)
+								ConfigDropdown:SetValues(newConfigs)
 								StatusParagraph:SetContent(
 									"Current: " .. selectedConfigName .. " | Autoload: " .. (GetAutoload() or "None")
 								)
