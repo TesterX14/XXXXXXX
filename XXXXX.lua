@@ -753,18 +753,21 @@ function Chloex:Window(GuiConfig)
 		task.wait()
 	end
 
-	GuiConfig = GuiConfig or {}
-	GuiConfig.Title = GuiConfig.Title or "Chloe X"
-	GuiConfig.Footer = GuiConfig.Footer or "Chloee :3"
-	GuiConfig.Color = GuiConfig.Color or Color3.fromRGB(255, 0, 255)
-	GuiConfig["Tab Width"] = GuiConfig["Tab Width"] or 120
-	GuiConfig.Version = GuiConfig.Version or 1
+    GuiConfig              = GuiConfig or {}
+    GuiConfig.Title        = GuiConfig.Title or "Chloe X"
+    GuiConfig.Footer       = GuiConfig.Footer or "Chloee :3"
+    GuiConfig.Color        = GuiConfig.Color or Color3.fromRGB(0, 208, 255)
+    GuiConfig["Tab Width"] = GuiConfig["Tab Width"] or 120
+    GuiConfig.Version      = GuiConfig.Version or 1
 
-	local autoloadName = GetAutoload()
-	if autoloadName then
-		LoadConfig(autoloadName)
-	else
-		ConfigData = { _version = CURRENT_VERSION }
+    CURRENT_VERSION        = GuiConfig.Version
+
+    local autoloadName = GetAutoload()
+    if autoloadName then
+        LoadConfig(autoloadName)
+    else
+        ConfigData = { _version = CURRENT_VERSION }
+    endonfigData = { _version = CURRENT_VERSION }
 	end
 
 	local GuiFunc = {}
