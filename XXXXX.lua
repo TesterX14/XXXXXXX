@@ -3196,7 +3196,7 @@ function Chloex:Window(GuiConfig)
 				Items:AddButton({
 					Title = "Import Config",
 					Callback = function()
-						local input = Elements["Input_External Config JSON"]
+						local input = Elements["Input_Input External Config"]
 						local json = input and input.Value
 
 						if not json or json == "" then
@@ -3206,7 +3206,7 @@ function Chloex:Window(GuiConfig)
 
 						ResetElements()
 
-						local ok = pcall(function()
+						local ok, err = pcall(function()
 							LoadExternalConfigFromJSON(json)
 						end)
 
@@ -3216,6 +3216,7 @@ function Chloex:Window(GuiConfig)
 								"Current: External JSON | Autoload: " .. (GetAutoload() or "None")
 							)
 						else
+							warn(err)
 							chloex("Failed to load external JSON", 3, Color3.fromRGB(255, 100, 100))
 						end
 					end,
@@ -3248,4 +3249,3 @@ function Chloex:Window(GuiConfig)
 end
 
 return Chloex
-
