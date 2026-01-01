@@ -1161,6 +1161,18 @@ function Chloex:Window(GuiConfig)
 		end)
 	end)
 
+	local ToggleKey = Enum.KeyCode.F3
+	UserInputService.InputBegan:Connect(function(input, gpe)
+		if gpe then
+			return
+		end
+		if input.KeyCode == ToggleKey then
+			if DropShadowHolder then
+				DropShadowHolder.Visible = not DropShadowHolder.Visible
+			end
+		end
+	end)
+
 	function GuiFunc:ToggleUI()
 		local ScreenGui = Instance.new("ScreenGui")
 		ScreenGui.Parent = game:GetService("CoreGui")
@@ -3157,17 +3169,33 @@ function Chloex:Window(GuiConfig)
 					end,
 				})
 
+				Items:AddButton({
+					Title = "Export Config",
+					SubTitle = "Export as JSON",
+					Callback = function()
+						if not setclipboard then
+							chloex("Clipboard not supported", 3, Color3.fromRGB(255, 100, 100))
+							return
+						end
+
+						ConfigData._version = CURRENT_VERSION
+						local json = HttpService:JSONEncode(ConfigData)
+
+						setclipboard(json)
+						chloex("Config copied to clipboard", 3, Color3.fromRGB(100, 255, 100))
+					end,
+				})
+
 				Items:AddSubSection("Load From External")
 
 				Items:AddInput({
-					Title = "External Config JSON",
+					Title = "Input External Config",
 					Content = "Paste raw JSON config here",
 					Placeholder = '{ "Toggle_AutoFish": true }',
 				})
 
 				Items:AddButton({
-					Title = "Load External JSON",
-					SubTitle = "Reset & Apply",
+					Title = "Import Config",
 					Callback = function()
 						local input = Elements["Input_External Config JSON"]
 						local json = input and input.Value
