@@ -3171,7 +3171,6 @@ function Chloex:Window(GuiConfig)
 
 				Items:AddButton({
 					Title = "Export Config",
-					SubTitle = "Export as JSON",
 					Callback = function()
 						if not setclipboard then
 							chloex("Clipboard not supported", 3, Color3.fromRGB(255, 100, 100))
@@ -3249,3 +3248,4 @@ function Chloex:Window(GuiConfig)
 end
 
 return Chloex
+
