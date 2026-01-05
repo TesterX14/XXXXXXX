@@ -13,26 +13,16 @@ if not isfolder("Chloe X") then
 	makefolder("Chloe X")
 end
 
-local gameName = tostring(game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
-gameName = gameName:gsub("[^%w_ ]", "")
-gameName = gameName:gsub("%s+", "_")
-
-local gameFolder = "Chloe X/" .. gameName
-if not isfolder(gameFolder) then
-	makefolder(gameFolder)
-end
-
-local CurrentConfigName = nil
-local AutoloadFile = gameFolder .. "/autoload.txt"
+local gameFolder = nil
+local AutoloadFile = nil
 
 ConfigData = {}
 Elements = {}
 CURRENT_VERSION = nil
 
--- Get list of all config files in game folder
 function GetConfigList()
 	local configs = {}
-	if isfolder and listfiles then
+	if isfolder and listfiles and gameFolder then
 		local files = listfiles(gameFolder)
 		for _, filepath in pairs(files) do
 			local filename = filepath:match("([^/\\]+)%.json$")
@@ -44,43 +34,39 @@ function GetConfigList()
 	return configs
 end
 
--- Get autoload config name from autoload.txt
 function GetAutoload()
-	if isfile and isfile(AutoloadFile) then
+	if isfile and AutoloadFile and isfile(AutoloadFile) then
 		local success, content = pcall(function()
 			return readfile(AutoloadFile)
 		end)
 		if success and content and content ~= "" then
-			return content:match("^%s*(.-)%s*$") -- trim whitespace
+			return content:match("^%s*(.-)%s*$")
 		end
 	end
 	return nil
 end
 
--- Set autoload config
 function SetAutoload(configName)
-	if writefile then
+	if writefile and AutoloadFile then
 		writefile(AutoloadFile, configName)
 		print("[CHX] Autoload config set to: " .. configName)
 	end
 end
 
--- Clear autoload config
 function ClearAutoload()
-	if delfile and isfile(AutoloadFile) then
+	if delfile and AutoloadFile and isfile(AutoloadFile) then
 		delfile(AutoloadFile)
 		print("[CHX] Autoload config cleared")
 	end
 end
 
--- Save config with specific name
 function SaveConfigAs(configName)
 	if not configName or configName == "" then
 		warn("[CHX] Config name cannot be empty")
 		return false
 	end
 
-	if writefile then
+	if writefile and gameFolder then
 		local filepath = gameFolder .. "/" .. configName .. ".json"
 		ConfigData._version = CURRENT_VERSION
 		writefile(filepath, HttpService:JSONEncode(ConfigData))
@@ -91,7 +77,6 @@ function SaveConfigAs(configName)
 	return false
 end
 
--- Load config from specific name
 function LoadConfig(configName)
 	if not configName or configName == "" then
 		warn("Config name cannot be empty")
@@ -128,7 +113,6 @@ function LoadConfig(configName)
 	end
 end
 
--- Delete config
 function DeleteConfig(configName)
 	if not configName or configName == "" then
 		warn("[CHX] Config name cannot be empty")
@@ -140,7 +124,6 @@ function DeleteConfig(configName)
 		delfile(filepath)
 		print("[CHX] Config deleted: " .. configName)
 
-		-- If deleted config was autoload, clear autoload
 		if GetAutoload() == configName then
 			ClearAutoload()
 		end
@@ -152,7 +135,6 @@ function DeleteConfig(configName)
 	end
 end
 
--- Load config elements into UI
 function LoadConfigElements()
 	for key, element in pairs(Elements) do
 		if ConfigData[key] ~= nil and element.Set then
@@ -161,40 +143,35 @@ function LoadConfigElements()
 	end
 end
 
--- Reset all elements to default
 function ResetElements()
-	-- Clear ConfigData
 	ConfigData = { _version = CURRENT_VERSION }
 
-	-- Reset elements berdasarkan type
 	for key, element in pairs(Elements) do
 		if element.Set then
 			pcall(function()
-				-- Detect type berdasarkan key prefix
 				if key:match("^Toggle_") then
-					element:Set(false) -- Toggle default = false
+					element:Set(false)
 				elseif key:match("^Slider_") then
-					element:Set(20) -- Slider default = 20
+					element:Set(20)
 				elseif key:match("^Input_") then
-					element:Set("") -- Input default = ""
+					element:Set("")
 				elseif key:match("^Dropdown_") then
-					-- Dropdown bisa multi atau single
 					if type(element.Value) == "table" then
-						element:Set({}) -- Multi dropdown = empty table
+						element:Set({})
 					else
-						element:Set(nil) -- Single dropdown = nil
+						element:Set(nil)
 					end
 				end
 			end)
 		end
 	end
 
-	print("Elements reset to defaults")
+	print("[CHX] Elements reset to defaults")
 end
 
 function LoadExternalConfigFromJSON(jsonString)
 	if not jsonString or jsonString == "" then
-		warn("External config JSON kosong")
+		warn("[CHX] External config JSON kosong")
 		return false
 	end
 
@@ -671,17 +648,10 @@ local function ShowLoading()
 	stroke.Color = Color3.fromRGB(120, 200, 255)
 	stroke.Parent = bg
 
-	local icon = Instance.new("ImageLabel")
-	icon.BackgroundTransparency = 1
-	icon.Size = UDim2.new(0, 42, 0, 42)
-	icon.Position = UDim2.new(0, 14, 0, 14)
-	icon.Image = "rbxassetid://6859361595"
-	icon.Parent = bg
-
 	local title = Instance.new("TextLabel")
 	title.BackgroundTransparency = 1
-	title.Position = UDim2.new(0, 66, 0, 16)
-	title.Size = UDim2.new(1, -80, 0, 20)
+	title.Position = UDim2.new(0, 16, 0, 16)
+	title.Size = UDim2.new(1, -150, 0, 20)
 	title.Font = Enum.Font.GothamBold
 	title.TextSize = 15
 	title.TextXAlignment = Enum.TextXAlignment.Left
@@ -691,8 +661,8 @@ local function ShowLoading()
 
 	local msg = Instance.new("TextLabel")
 	msg.BackgroundTransparency = 1
-	msg.Position = UDim2.new(0, 66, 0, 36)
-	msg.Size = UDim2.new(1, -80, 0, 20)
+	msg.Position = UDim2.new(0, 16, 0, 36)
+	msg.Size = UDim2.new(1, -150, 0, 20)
 	msg.Font = Enum.Font.Gotham
 	msg.TextSize = 13
 	msg.TextXAlignment = Enum.TextXAlignment.Left
@@ -700,11 +670,24 @@ local function ShowLoading()
 	msg.TextColor3 = Color3.fromRGB(230, 235, 255)
 	msg.Parent = bg
 
+	local rightImage = Instance.new("ImageLabel")
+	rightImage.BackgroundTransparency = 1
+	rightImage.AnchorPoint = Vector2.new(1, 0)
+	rightImage.Position = UDim2.new(1, -6, 0, 6)
+	rightImage.Size = UDim2.new(0, holder.Size.Y.Offset - 12, 1, -12)
+	rightImage.Image = "rbxassetid://119058035877218"
+	rightImage.ScaleType = Enum.ScaleType.Fit
+	rightImage.ImageTransparency = 1
+	rightImage.ZIndex = 1
+	rightImage.Parent = bg
+	Instance.new("UICorner", rightImage).CornerRadius = UDim.new(0, 10)
+
 	local barBg = Instance.new("Frame")
 	barBg.Position = UDim2.new(0, 14, 1, -14)
 	barBg.Size = UDim2.new(1, -28, 0, 6)
 	barBg.BackgroundColor3 = Color3.fromRGB(35, 38, 48)
 	barBg.BorderSizePixel = 0
+	barBg.ZIndex = 3
 	barBg.Parent = bg
 	Instance.new("UICorner", barBg).CornerRadius = UDim.new(1, 0)
 
@@ -714,21 +697,21 @@ local function ShowLoading()
 	bar.Size = UDim2.new(0, 0, 1, 0)
 	bar.BackgroundColor3 = Color3.fromRGB(120, 200, 255)
 	bar.BorderSizePixel = 0
+	bar.ZIndex = 4
+	bar.BackgroundTransparency = 1
 	bar.Parent = barBg
 	Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
 
 	bg.BackgroundTransparency = 1
 	stroke.Transparency = 1
-	icon.ImageTransparency = 1
 	title.TextTransparency = 1
 	msg.TextTransparency = 1
-	bar.BackgroundTransparency = 1
 
 	TweenService:Create(bg, TweenInfo.new(0.3), { BackgroundTransparency = 0.12 }):Play()
 	TweenService:Create(stroke, TweenInfo.new(0.3), { Transparency = 0.45 }):Play()
-	TweenService:Create(icon, TweenInfo.new(0.3), { ImageTransparency = 0 }):Play()
 	TweenService:Create(title, TweenInfo.new(0.3), { TextTransparency = 0 }):Play()
 	TweenService:Create(msg, TweenInfo.new(0.3), { TextTransparency = 0 }):Play()
+	TweenService:Create(rightImage, TweenInfo.new(0.3), { ImageTransparency = 0 }):Play()
 	TweenService:Create(bar, TweenInfo.new(3, Enum.EasingStyle.Linear), {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 0,
@@ -737,10 +720,10 @@ local function ShowLoading()
 	task.delay(3.2, function()
 		TweenService:Create(bg, TweenInfo.new(0.25), { BackgroundTransparency = 1 }):Play()
 		TweenService:Create(stroke, TweenInfo.new(0.25), { Transparency = 1 }):Play()
-		TweenService:Create(icon, TweenInfo.new(0.25), { ImageTransparency = 1 }):Play()
 		TweenService:Create(title, TweenInfo.new(0.25), { TextTransparency = 1 }):Play()
 		TweenService:Create(msg, TweenInfo.new(0.25), { TextTransparency = 1 }):Play()
 		TweenService:Create(bar, TweenInfo.new(0.25), { BackgroundTransparency = 1 }):Play()
+		TweenService:Create(rightImage, TweenInfo.new(0.25), { ImageTransparency = 1 }):Play()
 		task.wait(0.28)
 		gui:Destroy()
 	end)
@@ -760,6 +743,14 @@ function Chloex:Window(GuiConfig)
 	GuiConfig["Tab Width"] = GuiConfig["Tab Width"] or 120
 	GuiConfig.Version = GuiConfig.Version or 1
 
+	local folderName = GuiConfig.Folder or GuiConfig.Title:gsub("[^%w_ ]", ""):gsub("%s+", "_")
+	gameFolder = "Chloe X/" .. folderName
+	AutoloadFile = gameFolder .. "/autoload.txt"
+
+	if not isfolder(gameFolder) then
+		makefolder(gameFolder)
+	end
+
 	CURRENT_VERSION = GuiConfig.Version
 
 	local autoloadName = GetAutoload()
@@ -767,7 +758,6 @@ function Chloex:Window(GuiConfig)
 		LoadConfig(autoloadName)
 	else
 		ConfigData = { _version = CURRENT_VERSION }
-		endonfigData = { _version = CURRENT_VERSION }
 	end
 
 	local GuiFunc = {}
@@ -2011,7 +2001,6 @@ function Chloex:Window(GuiConfig)
 					InputBox.FocusLost:Connect(function()
 						PanelFunc.Value = InputBox.Text
 						ConfigData[configKey] = InputBox.Text
-						-- Auto-save disabled - use manual save
 					end)
 				end
 
@@ -2030,8 +2019,8 @@ function Chloex:Window(GuiConfig)
 				ButtonConfig.SubTitle = ButtonConfig.SubTitle or nil
 				ButtonConfig.SubCallback = ButtonConfig.SubCallback or function() end
 
-				local ICON_IDLE = "rbxassetid://11128718799"
-				local ICON_CLICK = "rbxassetid://6860051781"
+				local ICON_IDLE = "rbxassetid://115552801804948"
+				local ICON_CLICK = "rbxassetid://71771678979400"
 
 				local Button = Instance.new("Frame")
 				Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -2039,10 +2028,7 @@ function Chloex:Window(GuiConfig)
 				Button.Size = UDim2.new(1, 0, 0, 40)
 				Button.LayoutOrder = CountItem
 				Button.Parent = SectionAdd
-
-				local UICorner = Instance.new("UICorner")
-				UICorner.CornerRadius = UDim.new(0, 4)
-				UICorner.Parent = Button
+				Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 4)
 
 				local MainButton = Instance.new("TextButton")
 				MainButton.Font = Enum.Font.GothamBold
@@ -2056,12 +2042,26 @@ function Chloex:Window(GuiConfig)
 				MainButton.Position = UDim2.new(0, 6, 0, 5)
 				MainButton.Parent = Button
 				MainButton.AutoButtonColor = false
-				MainButton.TextXAlignment = Enum.TextXAlignment.Center
-				MainButton.TextYAlignment = Enum.TextYAlignment.Center
+				MainButton.ClipsDescendants = true
+				MainButton.ZIndex = 10
+				Instance.new("UICorner", MainButton).CornerRadius = UDim.new(0, 4)
 
-				local mainCorner = Instance.new("UICorner")
-				mainCorner.CornerRadius = UDim.new(0, 4)
-				mainCorner.Parent = MainButton
+				local Aurora = Instance.new("ImageLabel")
+				Aurora.BackgroundTransparency = 1
+				Aurora.Size = UDim2.new(2, 0, 2, 0)
+				Aurora.Position = UDim2.new(-0.5, 0, -0.5, 0)
+				Aurora.Image = "rbxassetid://5553946656"
+				Aurora.ImageTransparency = 1
+				Aurora.ZIndex = 11
+				Aurora.Parent = MainButton
+
+				local Gradient = Instance.new("UIGradient")
+				Gradient.Color = ColorSequence.new({
+					ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 230, 255)),
+					ColorSequenceKeypoint.new(0.5, Color3.fromRGB(90, 170, 255)),
+					ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 120, 220)),
+				})
+				Gradient.Parent = Aurora
 
 				local Icon = Instance.new("ImageLabel")
 				Icon.BackgroundTransparency = 1
@@ -2069,26 +2069,34 @@ function Chloex:Window(GuiConfig)
 				Icon.AnchorPoint = Vector2.new(0, 0.5)
 				Icon.Position = UDim2.new(0, 0, 0.5, 0)
 				Icon.Image = ICON_IDLE
+				Icon.ZIndex = 12
 				Icon.Parent = MainButton
 
-				local function flash(btn, icon)
+				local function auroraFlash(btn, icon)
 					if icon then
 						icon.Image = ICON_CLICK
 					end
+					Aurora.ImageTransparency = 0.25
+					Gradient.Rotation = math.random(0, 360)
 
-					TweenService:Create(
-						btn,
-						TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-						{ BackgroundTransparency = 0.85 }
-					):Play()
+					TweenService:Create(Aurora, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+						ImageTransparency = 0.85,
+					}):Play()
 
-					task.delay(0.12, function()
-						TweenService:Create(
-							btn,
-							TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-							{ BackgroundTransparency = 0.935 }
-						):Play()
+					TweenService:Create(Gradient, TweenInfo.new(0.6, Enum.EasingStyle.Linear), {
+						Rotation = Gradient.Rotation + 120,
+					}):Play()
 
+					TweenService:Create(btn, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+						BackgroundTransparency = 0.85,
+					}):Play()
+
+					task.delay(0.15, function()
+						TweenService
+							:Create(btn, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+								BackgroundTransparency = 0.935,
+							})
+							:Play()
 						if icon then
 							icon.Image = ICON_IDLE
 						end
@@ -2096,7 +2104,7 @@ function Chloex:Window(GuiConfig)
 				end
 
 				MainButton.MouseButton1Down:Connect(function()
-					flash(MainButton, Icon)
+					auroraFlash(MainButton, Icon)
 				end)
 
 				MainButton.MouseButton1Click:Connect(ButtonConfig.Callback)
@@ -2116,21 +2124,19 @@ function Chloex:Window(GuiConfig)
 					SubButton.Position = UDim2.new(0.5, 2, 0, 5)
 					SubButton.Parent = Button
 					SubButton.AutoButtonColor = false
-
-					local subCorner = Instance.new("UICorner")
-					subCorner.CornerRadius = UDim.new(0, 4)
-					subCorner.Parent = SubButton
+					SubButton.ClipsDescendants = true
+					SubButton.ZIndex = 10
+					Instance.new("UICorner", SubButton).CornerRadius = UDim.new(0, 4)
 
 					SubButton.MouseButton1Down:Connect(function()
-						flash(SubButton)
+						auroraFlash(SubButton)
 					end)
 
 					SubButton.MouseButton1Click:Connect(ButtonConfig.SubCallback)
 				end
 
-				CountItem = CountItem + 1
+				CountItem += 1
 			end
-
 			function Items:AddToggle(ToggleConfig)
 				local ToggleConfig = ToggleConfig or {}
 				ToggleConfig.Title = ToggleConfig.Title or "Title"
