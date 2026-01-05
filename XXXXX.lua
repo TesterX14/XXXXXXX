@@ -13,17 +13,8 @@ if not isfolder("Chloe X") then
 	makefolder("Chloe X")
 end
 
-local gameName = tostring(game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
-gameName = gameName:gsub("[^%w_ ]", "")
-gameName = gameName:gsub("%s+", "_")
-
-local gameFolder = "Chloe X/" .. gameName
-if not isfolder(gameFolder) then
-	makefolder(gameFolder)
-end
-
-local CurrentConfigName = nil
-local AutoloadFile = gameFolder .. "/autoload.txt"
+local gameFolder
+local AutoloadFile
 
 ConfigData = {}
 Elements = {}
@@ -759,17 +750,26 @@ function Chloex:Window(GuiConfig)
 	GuiConfig.Color = GuiConfig.Color or Color3.fromRGB(0, 208, 255)
 	GuiConfig["Tab Width"] = GuiConfig["Tab Width"] or 120
 	GuiConfig.Version = GuiConfig.Version or 1
+	GuiConfig.Folder = GuiConfig.Folder or "DefaultConfig"
 
 	CURRENT_VERSION = GuiConfig.Version
+
+	local folderName = GuiConfig.Folder
+
+	gameFolder = "Chloe X/" .. folderName
+	if not isfolder(gameFolder) then
+		makefolder(gameFolder)
+	end
+
+	AutoloadFile = gameFolder .. "/autoload.txt"
 
 	local autoloadName = GetAutoload()
 	if autoloadName then
 		LoadConfig(autoloadName)
 	else
 		ConfigData = { _version = CURRENT_VERSION }
-		endonfigData = { _version = CURRENT_VERSION }
 	end
-
+end
 	local GuiFunc = {}
 
 	local Chloeex = Instance.new("ScreenGui")
@@ -3030,7 +3030,7 @@ function Chloex:Window(GuiConfig)
 				Label.Size = UDim2.new(1, -20, 1, 0)
 				Label.BackgroundTransparency = 1
 				Label.Font = Enum.Font.GothamBold
-				Label.Text = "── [ " .. title .. " ] ──"
+				Label.Text = "── [ " .. title .. " ] ──" 
 				Label.TextColor3 = Color3.fromRGB(0, 208, 255)
 				Label.TextSize = 13
 				Label.TextXAlignment = Enum.TextXAlignment.Left
