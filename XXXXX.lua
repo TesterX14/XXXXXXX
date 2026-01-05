@@ -13,21 +13,12 @@ if not isfolder("Chloe X") then
 	makefolder("Chloe X")
 end
 
-local gameName = tostring(game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
-gameName = gameName:gsub("[^%w_ ]", "")
-gameName = gameName:gsub("%s+", "_")
-
-local gameFolder = "Chloe X/" .. gameName
-if not isfolder(gameFolder) then
-	makefolder(gameFolder)
-end
-
 local CurrentConfigName = nil
-local AutoloadFile = gameFolder .. "/autoload.txt"
-
 ConfigData = {}
 Elements = {}
 CURRENT_VERSION = nil
+gameFolder = nil
+AutoloadFile = nil
 
 -- Get list of all config files in game folder
 function GetConfigList()
@@ -754,6 +745,11 @@ function Chloex:Window(GuiConfig)
 	end
 
 	GuiConfig = GuiConfig or {}
+
+	if not GuiConfig.Folder or GuiConfig.Folder == "" then
+		error("[CHX] GuiConfig.Folder is REQUIRED")
+	end
+
 	GuiConfig.Title = GuiConfig.Title or "Chloe X"
 	GuiConfig.Footer = GuiConfig.Footer or "Chloee :3"
 	GuiConfig.Color = GuiConfig.Color or Color3.fromRGB(0, 208, 255)
@@ -762,12 +758,22 @@ function Chloex:Window(GuiConfig)
 
 	CURRENT_VERSION = GuiConfig.Version
 
+	local folderName = tostring(GuiConfig.Folder)
+	folderName = folderName:gsub("[^%w_ ]", "")
+	folderName = folderName:gsub("%s+", "_")
+
+	gameFolder = "Chloe X/" .. folderName
+	if not isfolder(gameFolder) then
+		makefolder(gameFolder)
+	end
+
+	AutoloadFile = gameFolder .. "/autoload.txt"
+
 	local autoloadName = GetAutoload()
 	if autoloadName then
 		LoadConfig(autoloadName)
 	else
 		ConfigData = { _version = CURRENT_VERSION }
-		endonfigData = { _version = CURRENT_VERSION }
 	end
 
 	local GuiFunc = {}
